@@ -1,0 +1,7 @@
+201003/CE-320/4/Microcomputers I/B+/N
+201001/CS-312/4/Theory of Computation/CR/Y
+200903/CS-102/4/Computing & Algorithms II/A/N
+201003/CE-422/4/Computer Architecture & Organization/I/Y
+201101/COMM-301/4/Written & Oral Communication II/C/N
+200903/CS-211/4/Discrete Mathematics/B+/N
+201701/COMM-201/4/Written & Oral Communication I/C/N
