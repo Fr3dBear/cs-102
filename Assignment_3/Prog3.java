@@ -29,6 +29,7 @@ public class Prog3
 								"\n    4 --> Computer GPAs" 			   +
 								"\n    5 --> Add Course"				   +
 								"\n    6 --> Remove Course"				   +
+								"\n    7 --> Edit Course"                  +
 								"\n    9 --> Exit"						   ;
 		
 		final int choice1 = 1; // Course by number
@@ -123,8 +124,8 @@ public class Prog3
 				case choice6: userRemoveCourse(courseData, console, courseSearcher);
 							  break;
 							  
-				//case choice7: userEditCourse(courseData, console, courseSearcher);
-				//			  break;
+				case choice7: userEditCourse(courseData, console, courseSearcher);
+							  break;
 						
 				case choice9: System.out.println("Exiting");
 							  System.exit(0); // exit successfully
@@ -170,7 +171,7 @@ public class Prog3
 			tempCourse.setCourseNumber(pieces.next());			 // Set the course number
 			tempCourse.setCreditCount(pieces.nextInt());		 // Set the number of credits the class is worth
 			tempCourse.setCourseTitle(pieces.next());			 // Set the course title
-			tempCourse.setCourseGrade(pieces.next());			 // Set the course grade
+			tempCourse.setCourseGrade(pieces.next().toUpperCase()); // Set the course grade
 			tempCourse.setExcludeFlag(pieces.next());			 // Set the exclude flag
 		}
 		catch(ParseException exc)
@@ -184,7 +185,7 @@ public class Prog3
 			return;
 		}
 		targetDatabase.addCourse(tempCourse);
-		System.out.println("\nDone adding courses!\n");
+		System.out.println("\n"); // extra space for prettyness
 	}
 	
 	/*************************************************************
@@ -197,47 +198,42 @@ public class Prog3
 	private static void userRemoveCourse(Database targetDatabase, Scanner console,
 			CourseSearch courseSearcher)
 	{
+		int promptCtr = 0; // Counter for seeing how many time the user was prompted
 		System.out.println("Please enter the course number you would like to remove:");
 		String userInput = console.next(); // users course input
 		console.nextLine(); // Clear the scanner's buffer by going to the return char
 							//    still viable if a newline char is pasted into terminal
+		LinkedList<Integer> returnResults; // Results from the course search
+		int deletedCounter = 0; // counter for number of courses deleted
+		try
+		{
+			System.out.print("Course search, ");
+			returnResults = courseSearcher.findByNumber(userInput, targetDatabase);
+		} 
+		catch (NoSuchFieldException exc)
+		{ 
+			System.out.println("No results were found!\n");
+			return;
+		}
 		System.out.println("Please enter the term you would like to remove it from " +
 				           "(yyyytt): ");
 		String termInput = console.next(); // capture the term to delete from
 		console.nextLine(); // Clear the scanner's buffer by going to the return char
 							//     still viable if a newline char is pasted into terminal
-		LinkedList<Integer> returnResults;
-		int deletedCounter = 0; // counter for number of courses deleted
-		try
-		{
-			returnResults = courseSearcher.findByNumber(userInput, targetDatabase);
-		} 
-		catch (NoSuchFieldException exc)
-		{ 
-			System.out.println("No results were found!");
-			return;
-		}
 		// return results are stored resut[1] = index 1, reult[2] index2
 		for(int index=0;index<returnResults.size();)
 		{
-			// Print the course as long as it matches the term
+			// Print the course as long as it matches year and term
 			if(termInput.equalsIgnoreCase(targetDatabase.getArrayPosition(
 					((int) returnResults.get(index)),
-					((int)returnResults.get(index+1))).getTermTakenRaw()))
+					((int)returnResults.get(index+1))).getYearTaken()
+					+
+					targetDatabase.getArrayPosition(
+					((int) returnResults.get(index)),
+					((int)returnResults.get(index+1))).getTermTakenRaw())
+			   )
 			{
-				System.out.print(
-					targetDatabase.getArrayPosition(((int) returnResults.get(index)),
-							((int)returnResults.get(index+1))).getCourseNumber() + ": " +
-					targetDatabase.getArrayPosition(((int) returnResults.get(index)),
-							((int)returnResults.get(index+1))).getCourseTitle()  + " (" +
-					targetDatabase.getArrayPosition(((int) returnResults.get(index)),
-							((int)returnResults.get(index+1))).getCreditCount()  + "). "+
-				  	targetDatabase.getArrayPosition(((int) returnResults.get(index)),
-				  			((int)returnResults.get(index+1))).getTermTaken()	 + " "  +
-				  	targetDatabase.getArrayPosition(((int) returnResults.get(index)),
-				  			((int)returnResults.get(index+1))).getYearTaken()	 + " "  +
-				  	targetDatabase.getArrayPosition(((int) returnResults.get(index)),
-				  			((int)returnResults.get(index+1))).getCourseGrade()  + "\n"	);
+				printCourse(targetDatabase, returnResults, index);
 				System.out.println("Would you like to delete(y/n):");
 				userInput = console.next();
 				if(userInput.equalsIgnoreCase("y"))
@@ -248,10 +244,14 @@ public class Prog3
 					deletedCounter++;
 				}
 				else{/* do nothing */}
-				index += 2; // because of storage in results add 2 instead of 1
+				promptCtr++;
 			}
+			index += 2; // because of storage in results add 2 instead of 1
 		}
-		System.out.println("You deleted " + deletedCounter + " course(s)!\n");
+		if(promptCtr>0)
+			System.out.println("You deleted " + deletedCounter + " course(s)!\n");
+		else
+			System.out.println("There were no courses with the specified term!\n");
 	}
 	
 	/*************************************************************
@@ -261,21 +261,90 @@ public class Prog3
 	* Parameters: Database: Scanner: targetbase, console,  		 *
 	* Returns: void:           		 N/A				         *
 	**************************************************************/
-	private void userEditCourse(Database targetBase, Scanner console, CourseSearch courseSearcher)
+	private static void userEditCourse(Database targetDatabase, Scanner console, CourseSearch courseSearcher)
 	{
+		int promptCtr = 0; // Counter for seeing how many time the user was prompted
 		System.out.println("Please enter the course number you would like to edit:");
 		String userInput = console.next(); // users course input
 		console.nextLine(); // Clear the scanner's buffer by going to the return char
 							//    still viable if a newline char is pasted into terminal
-		LinkedList<Integer> returnResults;
+		LinkedList<Integer> returnResults; // Results from the course search
+		int editedCounter = 0; // For the number of edited courses
 		try
 		{
-			returnResults = courseSearcher.findByNumber(userInput, targetBase);
+			System.out.print("Course search, ");
+			returnResults = courseSearcher.findByNumber(userInput, targetDatabase);
 		} 
 		catch (NoSuchFieldException e)
 		{ 
-			System.out.println("No results were found!");
+			System.out.println("No results were found!\n");
 			return;
 		}
+		System.out.println("Please enter the term you would like to edit it in " +
+				           "(yyyytt): ");
+		String termInput = console.next(); // capture the term to delete from
+		console.nextLine(); // Clear the scanner's buffer by going to the return char
+							//     still viable if a newline char is pasted into terminal
+		// return results are stored resut[1] = index 1, reult[2] index2
+		for(int index=0;index<returnResults.size();)
+		{
+			// Print the course as long as it matches year and term
+			if(termInput.equalsIgnoreCase(targetDatabase.getArrayPosition(
+					((int) returnResults.get(index)),
+					((int)returnResults.get(index+1))).getYearTaken()
+					+
+					targetDatabase.getArrayPosition(
+					((int) returnResults.get(index)),
+					((int)returnResults.get(index+1))).getTermTakenRaw())
+			   )
+			{
+				printCourse(targetDatabase, returnResults, index);
+				System.out.println("Would you like to Edit?(y/n):");
+				userInput = console.next();
+				if(userInput.equalsIgnoreCase("y"))
+				{
+					// remove course from lower list then re add the modified
+					targetDatabase.remove(((int) returnResults.get(index)),
+							((int)returnResults.get(index+1)));
+					// create a new scanner as the old one causes problems
+					userAddCourse(targetDatabase, new Scanner(System.in));
+					editedCounter++;
+				}
+				else{/* do nothing */}
+				promptCtr++;
+			}
+			index += 2; // because of storage in results add 2 instead of 1
+		}
+		if(promptCtr>0)
+			System.out.println("You edited " + editedCounter + " course(s)!\n");
+		else
+			System.out.println("There were no courses with the specified term!\n");
+	}
+
+	/*************************************************************
+	* Method: printCourse()	 		                             *
+	* Purpose: print a singular course		 			         *
+	* 															 *
+	* NOTE: this was making all my methods too long so...        *
+	*          							                         *
+	* Parameters: Database: LinkedList: Index: 					 *
+	* 				targetDatabase, returnResults, index 		 *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
+	private static void printCourse(Database targetDatabase, LinkedList<Integer> returnResults, int index)
+	{
+		System.out.print(
+			targetDatabase.getArrayPosition(((int) returnResults.get(index)),
+					((int)returnResults.get(index+1))).getCourseNumber() + ": " +
+			targetDatabase.getArrayPosition(((int) returnResults.get(index)),
+					((int)returnResults.get(index+1))).getCourseTitle()  + " (" +
+			targetDatabase.getArrayPosition(((int) returnResults.get(index)),
+					((int)returnResults.get(index+1))).getCreditCount()  + "). "+
+		  	targetDatabase.getArrayPosition(((int) returnResults.get(index)),
+		  			((int)returnResults.get(index+1))).getTermTaken()	 + " "  +
+		  	targetDatabase.getArrayPosition(((int) returnResults.get(index)),
+		  			((int)returnResults.get(index+1))).getYearTaken()	 + " "  +
+		  	targetDatabase.getArrayPosition(((int) returnResults.get(index)),
+		  			((int)returnResults.get(index+1))).getCourseGrade()  + "\n"	);
 	}
 }
