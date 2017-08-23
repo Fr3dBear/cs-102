@@ -1,0 +1,21 @@
+200402/CS-101/4/Computing & Algorithms I/CR/Y
+200403/CHEM-135/3/Principles of Chemistry/A/N
+200403/CHEM-136/1/Principles of Chemistry Lab/A/N
+200403/COMM-101/4/Written & Oral Communication I/A/N
+200403/ECON-201/4/Economic Principles/A/N
+200403/MATH-101/4/Calculus I/A/N
+200501/CS-102/4/Computing & Algorithms II/A/N
+200501/CS-211/4/Discrete Mathematics/B/N
+200501/HUMN-201/4/Introduction to Humanities/A/N
+200501/MATH-102/4/Calculus II/B/N
+200501/SSCI-201/4/Introduction to Social Science/C/N
+200503/CS-203/4/Computing & Algorithms III/A-/N
+200503/CS-312/4/Theory of Computation/A/N
+200503/MATH-203/4/Multivariate Calculus/B-/N
+200503/PHYS-114/3/Newtonian Mechanics/B/N
+200503/PHYS-115/1/Newtonian Mechanics Lab/A/N
+200601/CE-210/4/Digital Systems I/C+/N
+200601/CS-455/4/Computer & Network Security/B+/N
+200601/MATH-408/4/Probability and Statistics/D+/N
+200601/PHYS-224/3/Electricity & Magnetism/I/Y
+200601/PHYS-225/1/Electricity & Magnetism Lab/I/Y
