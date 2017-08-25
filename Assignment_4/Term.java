@@ -10,7 +10,7 @@ import java.util.LinkedList;
 **************************************************************/
 public class Term implements TermInterface
 {
-	LinkedList<Course> courseList;  // Linked list of courses
+	Tree<Course> courseTree;		// Tree of all the courses
 	String term;					// The term of the courses
 	
 	/*************************************************************
@@ -22,7 +22,7 @@ public class Term implements TermInterface
 	**************************************************************/
 	Term()
 	{
-		courseList = new LinkedList<Course>(); // init an empty
+		courseTree = new Tree<Course>(); // init an empty tree
 		term = null;
 	}
 	/*************************************************************
@@ -34,7 +34,7 @@ public class Term implements TermInterface
 	**************************************************************/
 	Term(String term)
 	{
-		courseList = new LinkedList<Course>(); // init a empty
+		courseTree = new Tree<Course>(); // init a empty tree
 		this.term = term;
 	}
 
@@ -47,21 +47,9 @@ public class Term implements TermInterface
 	**************************************************************/
 	public boolean isEmpty()
 	{
-		if(courseList.isEmpty())
+		if(courseTree.isEmpty())
 			return true;
 		return false;
-	}
-
-	/*************************************************************
-	* Method: size()			                                 *
-	* Purpose: determine the size of linked list		         *
-	*          							                         *
-	* Parameters:                N/A                             *
-	* Returns: int:          	 the size of the array			 *
-	**************************************************************/
-	public int size()
-	{
-		return(courseList.size());
 	}
 
 	/*************************************************************
@@ -73,7 +61,7 @@ public class Term implements TermInterface
 	**************************************************************/
 	public Course get(int index)
 	{
-		return(courseList.get(index));
+		return(courseTree.get(index));
 	}
 
 	/*************************************************************

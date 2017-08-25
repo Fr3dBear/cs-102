@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
-import java.util.LinkedList;
 import java.util.Scanner;
 
 /*************************************************************

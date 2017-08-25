@@ -3,26 +3,26 @@
 * Login ID: nofs5491                                         *
 * CS-102, Summer 2017                                        *
 * Programming Assignment 4                                   *
-* Node class:  node object for linkedLists					 *
+* TreeNode class:  TreeNode object for creating trees		 *
 **************************************************************/
-public class Node<T>
+class TreeNode<T>
 {
-	T data;	// Data to be stored in Node
-	Node<T> next;		// Next node ptr
-	Node<T> previous;	// Previous node ptr
-	
-	/*************************************************************
+    T datum;
+    TreeNode<T> left;
+    TreeNode<T> right;
+    
+    /*************************************************************
 	* Method: Node()			                                 *
-	* Purpose: default constructor for node obj			         *
+	* Purpose: default constructor for TreeNode obj			     *
 	*          							                         *
 	* Parameters:                N/A                             *
 	* Returns: void:             N/A						     *
 	**************************************************************/
-	public Node()
+	public TreeNode()
 	{
-		data = null;
-		next = null;
-		previous = null;
+		datum = null;
+		left = null;
+		right = null;
 	}
 	
 	/*************************************************************
@@ -30,55 +30,54 @@ public class Node<T>
 	* Purpose: get previous node or next node			         *
 	*          							                         *
 	* Parameters:                N/A                             *
-	* Returns: Object:           data type stored in node	     *
+	* Returns: T:      data stored in node					     *
 	**************************************************************/
-	public T getData()
+	public T getDatum()
 	{
-		return data;
+		return datum;
 	}
 	
 	/*************************************************************
-	* Method: setData()			                                 *
+	* Method: setDatum()			                                 *
 	* Purpose: get previous node or next node			         *
 	*          							                         *
-	* Parameters: T:			 Data to be stored in node       *
+	* Parameters: Object:		 Data to be stored in node       *
 	* Returns: void:             N/A							 *
 	**************************************************************/
-	public void setData(T data)
+	public void setDatum(T datum)
 	{
-		this.data = data;
+		this.datum = datum;
 	}
 	
 	/*************************************************************
-	* Method: getNext()/getPrevious()                            *
-	* Purpose: get previous node or next node			         *
+	* Method: getLeft()/getRight()	                             *
+	* Purpose: get left node or right node				         *
 	*          							                         *
 	* Parameters:                N/A                             *
 	* Returns: Node:             Node pointing to next or prev   *
 	**************************************************************/
-	public Node<T> getNext()
+	public TreeNode<T> getLeft()
 	{
-		return next;
+		return left;
 	}
-	public Node<T> getPrevious()
+	public TreeNode<T> getRight()
 	{
-		return previous;
+		return right;
 	}
 	
 	/*************************************************************
-	* Method: setNext()/setPrevious()                            *
-	* Purpose: Set the next or previous node			         *
+	* Method: setLeft()/setRight()	                             *
+	* Purpose: Set the left or right node				         *
 	*          							                         *
 	* Parameters: Node:          Next/previous node              *
 	* Returns: Void:             N/A						     *
 	**************************************************************/
-	public void setNext(Node<T> next)
+	public void setLeft(TreeNode<T> left)
 	{
-		this.next = next;
+		this.left = left;
 	}	
-	public void setPrevious(Node<T> previous)
+	public void setRight(TreeNode<T> right)
 	{
-		this.previous = previous;
+		this.right = right;
 	}
-	
 }

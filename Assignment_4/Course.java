@@ -7,7 +7,7 @@ import java.text.ParseException;
 * Programming Assignment 4                                   *
 * Course class:  default class for Course objects		     *
 **************************************************************/
-public class Course
+public class Course implements Comparable<Course>
 {
 	int creditCount;	 // Number of credits the class is worth (1-4)
 	String termTaken;    // Term and year class was taken
@@ -123,6 +123,13 @@ public class Course
 		}
 		// Throw flag to show data passed is incorrect
 		else {throw new ParseException("Exclude flag is not correct!", -1);}
+	}
+	
+	
+	public int compareTo(Course compareIn)
+	{
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
