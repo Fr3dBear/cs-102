@@ -19,7 +19,7 @@ public class GpaCalc
 	public double calcGpa(Database targetDatabase) throws IllegalArgumentException
 	{
 		int totalCredits = 0; // Total credits on not excluded classes
-		double creditGpa = 0;  // Running total for credit * class grade
+		double creditGpa = 0; // Running total for credit * class grade
 		
 		// Check the status of the database
 		if(targetDatabase.getDatabaseSize() <= 0)
@@ -29,8 +29,8 @@ public class GpaCalc
 		
 		for(int index=0; index<targetDatabase.getDatabaseSize(); index++)
 		{
-			creditGpa = gatherGpa(targetDatabase.get(index).getRoot());
-			totalCredits = gatherCredits(targetDatabase.get(index).getRoot());
+			creditGpa += gatherGpa(targetDatabase.get(index).getRoot());
+			totalCredits += gatherCredits(targetDatabase.get(index).getRoot());
 		}
 		// Calc final database gpa
 		return (creditGpa/totalCredits);
@@ -98,9 +98,9 @@ public class GpaCalc
 	* Parameters: TreeNode:		current node	             	 *
 	* Returns: float:         	partal gpa from tree			 *
 	**************************************************************/
-	private float gatherGpa(TreeNode<Course> current)
+	private double gatherGpa(TreeNode<Course> current)
 	{
-		float gpa = 0; // running count of gpa
+		double gpa = 0; // running count of gpa
 		if(current == null) {return gpa;} // if fallen off list
 		
 		// Check to see if exclude flag is set
@@ -110,7 +110,7 @@ public class GpaCalc
 			try
 			{
 				// add to the total credit count
-				gpa += (getClassGrade(current.getDatum()) *
+				gpa = (getClassGrade(current.getDatum()) *
 						current.getDatum().getCreditCount());
 			}
 			catch(IllegalArgumentException exc)
@@ -164,9 +164,9 @@ public class GpaCalc
 		else{/* do nothing */}
 		
 		// gather the rest of the left till null
-	    totalCredits += gatherGpa(current.getRight());
+	    totalCredits += gatherCredits(current.getRight());
 	    // gather the rest of the right till null
-		totalCredits += gatherGpa(current.getLeft());
+		totalCredits += gatherCredits(current.getLeft());
 		return totalCredits; // return after searching left and right
 		
 	}

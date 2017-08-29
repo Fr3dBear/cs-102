@@ -1,5 +1,7 @@
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Scanner;
@@ -85,6 +87,47 @@ public class Database
 	}
 	
 	/*************************************************************
+	* Method: storeDatabase()	                                 *
+	* Purpose: Read file and store data into courseArray         *
+	*          							                         *
+	* Parameters:                                                *
+	*  		String fileName:	 stores database to file		 *
+	* Returns: Void:             N/A					         *
+	**************************************************************/
+	public void storeDatabase(String fileName)
+	{
+		String buffer = ""; // buffer for file write
+		File file = new File(fileName); // out-put file
+		// local arraycount for cycling through the database
+		int arrayCount = this.getDatabaseSize();
+		
+		// Check the status of the database
+		if(arrayCount <= 0)
+		{
+			throw new IllegalArgumentException("Database is empty!\n");
+		}
+		
+		// Loop semesters
+		for(int index=0; index<arrayCount; index++)
+		{
+			buffer += gatherPrint(this.get(index).getRoot());
+		}
+		try
+		{
+			// init writer
+		    BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+		    writer.write(buffer); // write buffer to file
+		    writer.close(); // close the writer
+		}
+		catch(IOException exc)
+		{
+			System.out.println("There was an error writing to the file!");
+		}
+		buffer = ""; // clear the buffer
+		System.out.println("\nSave successfull!\n");
+	}
+	
+	/*************************************************************
 	* Method: addCourse()                 		                 *
 	* Purpose: manually add a course to the database	         *
 	*          							                         *
@@ -121,26 +164,6 @@ public class Database
 			addCourse(lowerList, newCourse);
 		}
 	}
-	
-	/*************************************************************
-	* Method: getArrayPosition()                                 *
-	* Purpose: Return data a array position requested	         *
-	*          							                         *
-	* Parameters:                                                *
-	*	String position: 	index to return						 *
-	* Returns: Course:  data stored in the position requested    *
-	**************************************************************/
-	// TODO: remove?
-//	public Course getArrayPosition(int position, int secondIndex) throws ArrayIndexOutOfBoundsException
-//	{
-//		if(position <= courseList.size())
-//		{
-//			Term returnCourse = courseList.get(position);
-//			return returnCourse.get(secondIndex);
-//		}
-//		// Throw an error that tells asker that they picked an invalid array position
-//		else{throw new ArrayIndexOutOfBoundsException();}
-//	}
 	
 	/*************************************************************
 	* Method: getDatabaseSize()	                                 *
@@ -234,5 +257,45 @@ public class Database
 		}
 		catch(IndexOutOfBoundsException exc)
 		{ System.out.println("Index is out of bounds!");}
+	}
+	
+	/*************************************************************
+	* Method: removeAll()			                                 *
+	* Purpose: remove a course from database       				 *
+	*          							                         *
+	* Parameters: int: Course:	index, obj to be removed		 *
+	* Returns: void:            N/A							     *
+	**************************************************************/
+	public void removeAll()
+	{
+		// de link the old list
+		courseList.removeAll();
+		courseList = new LinkedList<Term>();
+	}
+	
+	/*************************************************************
+	* Method: gatherPrint()	*private*                      	     *
+	* Purpose: fills buffer with tree info				         *
+	*          							                         *
+	* Parameters: TreeNode:		current node	             	 *
+	* Returns: String:         	compiled buffer from tree		 *
+	**************************************************************/
+	private String gatherPrint(TreeNode<Course> current)
+	{
+		String buffer = "";
+		if(current == null) {return buffer;} // if fallen off list
+		// follow format yyyytt/cs-num/cred/title/grade/include
+		buffer += current.getDatum().getYearTaken()	   + "/" +
+				  current.getDatum().getTermTakenRaw() + "/" +
+				  current.getDatum().getCourseNumber() + "/" +
+				  current.getDatum().getCreditCount()  + "/" +
+				  current.getDatum().getCourseTitle()  + "/" +
+				  current.getDatum().getCourseGrade()  + "/" +
+				  current.getDatum().getExcludeFlag()  + "\n";
+		// gather the rest of the left till null
+	    buffer += gatherPrint(current.getRight());
+	    // gather the rest of the right till null
+		buffer += gatherPrint(current.getLeft());
+		return buffer;
 	}
 }

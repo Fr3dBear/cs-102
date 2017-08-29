@@ -50,8 +50,8 @@ public class ConsolePrint
 		buffer += current.getDatum().getCourseNumber() + ": " +
 				  current.getDatum().getCourseTitle()  + " (" +
 				  current.getDatum().getCreditCount()  + "). "+
-				  current.getDatum().getTermTaken()	 + " "  +
-				  current.getDatum().getYearTaken()	 + " "  +
+				  current.getDatum().getTermTaken()	   + " "  +
+				  current.getDatum().getYearTaken()	   + " "  +
 				  current.getDatum().getCourseGrade()  + ""	;
 		// Check to see if excluded from GPA calc
 		if(current.getDatum().getExcludeFlag().equals("Y") || 

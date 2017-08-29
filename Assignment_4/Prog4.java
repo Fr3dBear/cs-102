@@ -25,11 +25,13 @@ public class Prog4
 								"\n    1 --> Search for a course number"   +
 								"\n    2 --> Search course titles"         +
 								"\n    3 --> Print all records" 		   +
-								"\n    4 --> Computer GPAs" 			   +
+								"\n    4 --> Compute GPA"	 			   +
 								"\n    5 --> Add Course"				   +
 								"\n    6 --> Remove Course"				   +
 								"\n    7 --> Edit Course"                  +
-								"\n    9 --> Exit"						   ;
+								"\n    8 --> Store Database"			   +
+								"\n    9 --> Reload Database"              +
+								"\n    0 --> Exit"						   ;
 		
 		final int choice1 = 1; // Course by number
 		final int choice2 = 2; // Course by title
@@ -38,7 +40,9 @@ public class Prog4
 		final int choice5 = 5; // Add a course
 		final int choice6 = 6; // Remove a course
 		final int choice7 = 7; // Edit a course
-		final int choice9 = 9; // Exit
+		final int choice8 = 8; // Store Database
+		final int choice9 = 9; // Reload Database
+		final int choice0 = 0; // Exit
 		try
 		{
 			// attempt to load the database with file location
@@ -125,8 +129,14 @@ public class Prog4
 							  
 				case choice7: userEditCourse(courseData, console, courseSearcher);
 							  break;
+							  
+				case choice8: userStore(courseData, console);
+							  break;
+				
+				case choice9: userReload(courseData, console);
+							  break;
 						
-				case choice9: System.out.println("Exiting");
+				case choice0: System.out.println("Exiting");
 							  System.exit(0); // exit successfully
 				
 				// Catch all (commands that are not 1-4,9)
@@ -321,7 +331,57 @@ public class Prog4
 		else
 			System.out.println("There were no courses with the specified term!\n");
 	}
-
+	
+	/*************************************************************
+	* Method: userStore()	                                 	 *
+	* Purpose: store database to file					         *
+	*          							                         *
+	* Parameters: Database: Scanner: targetbase, console scanner *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
+	private static void userStore(Database targetDatabase, Scanner console)
+	{
+		System.out.println("Enter a file name to save too: ");
+		String userInput = console.next(); // users course input
+		console.nextLine(); // Clear the scanner's buffer by going to the return char
+							//    still viable if a newline char is pasted into terminal
+		
+	}
+	
+	/*************************************************************
+	* Method: userReload()		                                 *
+	* Purpose: reload a database from file	 			         *
+	*          							                         *
+	* Parameters: Database: Scanner: targetbase, console scanner *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
+	private static void userReload(Database targetDatabase, Scanner console)
+	{
+		System.out.println("Enter a file to load, within the local directory: ");
+		String userInput = console.next(); // users course input
+		console.nextLine(); // Clear the scanner's buffer by going to the return char
+							//    still viable if a newline char is pasted into terminal
+		
+		// Cast to string array to pass to load database
+		String userInputArray[] = {userInput};
+		targetDatabase.removeAll(); // destroy old data
+		try
+		{
+			// attempt to load the database with file location
+			//   given at runtime
+			targetDatabase.loadDatabase(userInputArray);
+		}
+		catch(ArrayIndexOutOfBoundsException exc)
+		{
+			System.out.println("The database is full, " + exc.getMessage() + " course(s) were loaded!");
+		}
+		catch(IllegalArgumentException exc)
+		{
+			System.out.println(exc.getMessage());
+		}
+		System.out.println("\nDatabase reloaded!\n");
+	}
+	
 	/*************************************************************
 	* Method: printCourse()	 		                             *
 	* Purpose: print a singular course		 			         *
