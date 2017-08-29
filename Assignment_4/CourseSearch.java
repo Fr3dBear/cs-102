@@ -26,28 +26,7 @@ public class CourseSearch
 		// Search given database for a matching string
 		for(int index=0; index<targetDatabase.getArraySize(); index++)
 		{
-			int numCourses = targetDatabase.get(index).size();
-			// Loop courses
-			for(int index2=0;index2<numCourses;index2++)
-			{
-				if(targetDatabase.getArrayPosition(index,index2).getCourseTitle().
-						toLowerCase().contains(courseTitle.toLowerCase()))
-				{
-					// Add the class attributes to the buffer
-					buffer += targetDatabase.getArrayPosition(index,index2).
-								getCourseNumber() + ": " +
-							  targetDatabase.getArrayPosition(index,index2).
-							  	getCourseTitle()  + " (" +
-							  targetDatabase.getArrayPosition(index,index2).
-							  	getCreditCount()  + "). "+
-							  targetDatabase.getArrayPosition(index,index2).
-							  	getTermTaken()	 + " "  +
-							  targetDatabase.getArrayPosition(index,index2).
-							  	getYearTaken()	 + " "  +
-							  targetDatabase.getArrayPosition(index,index2).
-							  	getCourseGrade()  + "\n"	;
-				}
-			}
+			buffer += gather(courseTitle, targetDatabase.get(index).getRoot());
 		}
 		if(!buffer.equals(""))
 		{
@@ -67,39 +46,35 @@ public class CourseSearch
 	* 		String: courseNumber: Course number to search for 	 *
 	* 		Database: targetDatabase: database to be searched	 *
 	* Returns: 													 *
-	* 		LinkedList<Integer>: list of course indexes 		 *
+	* 		LinkedList<Course> search results					 *
 	**************************************************************/
-	public LinkedList<Integer> findByNumber(String courseNumber, Database targetDatabase) throws NoSuchFieldException
+	public LinkedList<Course> findByNumber(String courseNumber, Database targetDatabase) throws NoSuchFieldException
 	{
 		String buffer = ""; // Out buffer
-		LinkedList<Integer> returnList = new LinkedList<Integer>();
+		Course tempCourse = new Course(); // Temp course for searching tree
+		LinkedList<Course> returnBuff = new LinkedList<Course>(); // search results
+		tempCourse.setCourseNumber(courseNumber);
 		
 		// Search given database for a matching string
 		for(int index=0; index<targetDatabase.getArraySize(); index++)
 		{
-			int numCourses = targetDatabase.get(index).size();
-			// Loop courses
-			for(int index2=0;index2<numCourses;index2++)
+			if(targetDatabase.get(index).search(tempCourse))
 			{
-				if(targetDatabase.getArrayPosition(index,index2).getCourseNumber().
-						toLowerCase().equals(courseNumber.toLowerCase()))
-				{
-					// Add the class attributes to the buffer
-					buffer += targetDatabase.getArrayPosition(index,index2).
-								getCourseNumber() + ": " +
-							  targetDatabase.getArrayPosition(index,index2).
-							  	getCourseTitle()  + " (" +
-							  targetDatabase.getArrayPosition(index,index2).
-							  	getCreditCount()  + "). "+
-							  targetDatabase.getArrayPosition(index,index2).
-							  	getTermTaken()	 + " "  +
-							  targetDatabase.getArrayPosition(index,index2).
-							  	getYearTaken()	 + " "  +
-							  targetDatabase.getArrayPosition(index,index2).
-							  	getCourseGrade()  + "\n"	;
-					returnList.addLast(index);  // first index
-					returnList.addLast(index2); // second index
-				}
+				// Add the class attributes to the buffer
+				buffer += targetDatabase.get(index).getSearched().getCourseNumber()
+							+ ": " +
+						  targetDatabase.get(index).getSearched().getCourseTitle()
+						  	+ " (" +
+						  targetDatabase.get(index).getSearched().getCreditCount()
+						  	+ "). "+
+						  targetDatabase.get(index).getSearched().getTermTaken()
+						  	+ " "  +
+						  targetDatabase.get(index).getSearched().getYearTaken()
+						  	+ " "  +
+						  targetDatabase.get(index).getSearched().getCourseGrade()
+						  	+ "\n"	;
+				// add last searched to LinkedList of found items
+				returnBuff.addLast(targetDatabase.get(index).getSearched());
 			}
 		}
 		if(!buffer.equals(""))
@@ -107,9 +82,47 @@ public class CourseSearch
 			System.out.println("Results:");
 			System.out.println(buffer);
 			buffer = ""; // clear buffer
-			return returnList;
+			return(returnBuff);
 		}
 		// Throw exception as no match was found
 		else{throw new NoSuchFieldException();}
 	}
+	
+	/*************************************************************
+	* Method: gather()	*private* 	                     	     *
+	* Purpose: fills buffer with tree					         *
+	*          							                         *
+	* Parameters: String: TreeNode:		target, current node   	 *
+	* Returns: String:         	compiled buffer from tree		 *
+	**************************************************************/
+	private String gather(String target, TreeNode<Course> current)
+	{
+		String buffer = "";
+		if(current == null) {return buffer;} // if fallen off list
+		
+		if(current.getDatum().getCourseTitle().
+				toLowerCase().contains(target.toLowerCase()))
+		{
+			// Add the class attributes to the buffer
+			buffer += current.getDatum().getCourseNumber() + ": " +
+					  current.getDatum().getCourseTitle()  + " (" +
+					  current.getDatum().getCreditCount()  + "). "+
+					  current.getDatum().getTermTaken()	 + " "  +
+					  current.getDatum().getYearTaken()	 + " "  +
+					  current.getDatum().getCourseGrade();
+			// Check to see if excluded from GPA calc
+			if(current.getDatum().getExcludeFlag().equals("Y") || 
+			   current.getDatum().getExcludeFlag().equals("y"))
+			{
+				buffer += " (excluded).\n";
+			}
+			else{buffer += ".\n";}
+		}
+		// gather the rest of the left till null
+	    buffer += gather(target,current.getRight());
+	    // gather the rest of the right till null
+		buffer += gather(target,current.getLeft());
+		return buffer;
+	}
+
 }

@@ -125,11 +125,17 @@ public class Course implements Comparable<Course>
 		else {throw new ParseException("Exclude flag is not correct!", -1);}
 	}
 	
-	
+	/*************************************************************
+	* Method: compareTo()		                                 *
+	* Purpose: to compare classes		                         *
+	* Parameters:                                                *
+	*   Course:	    			Course to be compared	         *
+	* Returns: int: 			-1 is, compare in is less        *
+	* 							0 is compare in is ==			 *
+	* 							1 is compare is greater			 *
+	**************************************************************/
 	public int compareTo(Course compareIn)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return compareIn.getCourseNumber().compareToIgnoreCase(this.getCourseNumber());
 	}
-
 }

@@ -203,7 +203,7 @@ public class Prog4
 		String userInput = console.next(); // users course input
 		console.nextLine(); // Clear the scanner's buffer by going to the return char
 							//    still viable if a newline char is pasted into terminal
-		LinkedList<Integer> returnResults; // Results from the course search
+		LinkedList<Course> returnResults; // Results from the course search
 		int deletedCounter = 0; // counter for number of courses deleted
 		try
 		{
@@ -224,23 +224,16 @@ public class Prog4
 		for(int index=0;index<returnResults.size();)
 		{
 			// Print the course as long as it matches year and term
-			if(termInput.equalsIgnoreCase(targetDatabase.getArrayPosition(
-					((int) returnResults.get(index)),
-					((int)returnResults.get(index+1))).getYearTaken()
-					+
-					targetDatabase.getArrayPosition(
-					((int) returnResults.get(index)),
-					((int)returnResults.get(index+1))).getTermTakenRaw())
-			   )
+			if(termInput.equalsIgnoreCase(targetDatabase.get(index).getRoot().
+					getDatum().getTermTakenRaw()))
 			{
-				printCourse(targetDatabase, returnResults, index);
+				printCourse(returnResults, index);
 				System.out.println("Would you like to delete(y/n):");
 				userInput = console.next();
 				if(userInput.equalsIgnoreCase("y"))
 				{
 					// remove course from lower list
-					targetDatabase.remove(((int) returnResults.get(index)),
-							((int)returnResults.get(index+1)));
+					targetDatabase.remove(index, returnResults.get(index));
 					deletedCounter++;
 				}
 				else{/* do nothing */}
@@ -268,14 +261,14 @@ public class Prog4
 		String userInput = console.next(); // users course input
 		console.nextLine(); // Clear the scanner's buffer by going to the return char
 							//    still viable if a newline char is pasted into terminal
-		LinkedList<Integer> returnResults; // Results from the course search
+		LinkedList<Course> returnResults = null; // Results from the course search
 		int editedCounter = 0; // For the number of edited courses
 		try
 		{
 			System.out.print("Course search, ");
 			returnResults = courseSearcher.findByNumber(userInput, targetDatabase);
 		} 
-		catch (NoSuchFieldException e)
+		catch (NoSuchFieldException exc)
 		{ 
 			System.out.println("No results were found!\n");
 			return;
@@ -289,23 +282,16 @@ public class Prog4
 		for(int index=0;index<returnResults.size();)
 		{
 			// Print the course as long as it matches year and term
-			if(termInput.equalsIgnoreCase(targetDatabase.getArrayPosition(
-					((int) returnResults.get(index)),
-					((int)returnResults.get(index+1))).getYearTaken()
-					+
-					targetDatabase.getArrayPosition(
-					((int) returnResults.get(index)),
-					((int)returnResults.get(index+1))).getTermTakenRaw())
-			   )
+			if(termInput.equalsIgnoreCase(targetDatabase.get(index).getRoot().
+					getDatum().getTermTakenRaw()))
 			{
-				printCourse(targetDatabase, returnResults, index);
+				printCourse(returnResults, index);
 				System.out.println("Would you like to Edit?(y/n):");
 				userInput = console.next();
 				if(userInput.equalsIgnoreCase("y"))
 				{
 					// remove course from lower list then re add the modified
-					targetDatabase.remove(((int) returnResults.get(index)),
-							((int)returnResults.get(index+1)));
+					targetDatabase.remove(index, returnResults.get(index));
 					// create a new scanner as the old one causes problems
 					userAddCourse(targetDatabase, new Scanner(System.in));
 					editedCounter++;
@@ -331,20 +317,14 @@ public class Prog4
 	* 				targetDatabase, returnResults, index 		 *
 	* Returns: void:           		 N/A				         *
 	**************************************************************/
-	private static void printCourse(Database targetDatabase, LinkedList<Integer> returnResults, int index)
+	private static void printCourse(LinkedList<Course> returnResults, int index)
 	{
 		System.out.print(
-			targetDatabase.getArrayPosition(((int) returnResults.get(index)),
-					((int)returnResults.get(index+1))).getCourseNumber() + ": " +
-			targetDatabase.getArrayPosition(((int) returnResults.get(index)),
-					((int)returnResults.get(index+1))).getCourseTitle()  + " (" +
-			targetDatabase.getArrayPosition(((int) returnResults.get(index)),
-					((int)returnResults.get(index+1))).getCreditCount()  + "). "+
-		  	targetDatabase.getArrayPosition(((int) returnResults.get(index)),
-		  			((int)returnResults.get(index+1))).getTermTaken()	 + " "  +
-		  	targetDatabase.getArrayPosition(((int) returnResults.get(index)),
-		  			((int)returnResults.get(index+1))).getYearTaken()	 + " "  +
-		  	targetDatabase.getArrayPosition(((int) returnResults.get(index)),
-		  			((int)returnResults.get(index+1))).getCourseGrade()  + "\n"	);
+			returnResults.get(index).getCourseNumber() 	+ ": " +
+			returnResults.get(index).getCourseTitle()  	+ " (" +
+			returnResults.get(index).getCreditCount()  	+ "). "+
+			returnResults.get(index).getTermTaken()		+ " "  +
+			returnResults.get(index).getYearTaken()	 	+ " "  +
+			returnResults.get(index).getCourseGrade()  	+ "\n"	);
 	}
 }

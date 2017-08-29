@@ -222,12 +222,11 @@ public class LinkedList<T> implements ListInterface<T>
 	* Notes: calls func that can throw indexoutboundsexception	 *         
 	*          							                         *
 	* Parameters: 												 *
-	* 			  Linked List:   list to be appended to          *
 	* 			  T:			 Object to be placed			 *
 	* 															 *
 	* Returns: void:           	 N/A							 *
 	**************************************************************/
-	public void addLast(LinkedList<T> list, T data)
+	public void addLast(T data)
 	{
 		Node<T> target;			  // target Node
 		Node<T> insert = new Node<T>(); // New inserted node
@@ -236,7 +235,7 @@ public class LinkedList<T> implements ListInterface<T>
 		insert.setData(data);
 		if(head!=null)
 		{
-			target = this.getNode(list.size()-1); // get the target index's node
+			target = this.getNode(this.size()-1); // get the target index's node
 			target.setNext(insert); // set last to be the next node to append
 			insert.setPrevious(target); // set insert to the pre last
 		}

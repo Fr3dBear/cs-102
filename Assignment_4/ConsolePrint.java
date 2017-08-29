@@ -7,9 +7,7 @@
 **************************************************************/
 
 public class ConsolePrint
-{
-	String buffer = ""; // Buffer string for data to be sent to console
-	
+{	
 	/*************************************************************
 	* Method: printDatabase()	                                 *
 	* Purpose: writes out the entire database			         *
@@ -19,6 +17,7 @@ public class ConsolePrint
 	**************************************************************/
 	public void printDatabase(Database printBase) throws IllegalArgumentException
 	{
+		String buffer = ""; // Buffer string for data to be sent to console
 		int arrayCount = 0; // local arraycount for cycling through the database
 		arrayCount = printBase.getArraySize();
 		
@@ -31,28 +30,41 @@ public class ConsolePrint
 		// Loop semesters
 		for(int index=0; index<arrayCount; index++)
 		{
-			int numCourses = printBase.get(index).size();
-			// Loop courses
-			for(int index2=0;index2<numCourses;index2++)
-			{
-				// Add the class attributes to the buffer
-				buffer += printBase.getArrayPosition(index,index2).getCourseNumber() + ": " +
-						  printBase.getArrayPosition(index,index2).getCourseTitle()  + " (" +
-						  printBase.getArrayPosition(index,index2).getCreditCount()  + "). "+
-						  printBase.getArrayPosition(index,index2).getTermTaken()	 + " "  +
-						  printBase.getArrayPosition(index,index2).getYearTaken()	 + " "  +
-						  printBase.getArrayPosition(index,index2).getCourseGrade()  + ""	;
-				
-				// Check to see if excluded from GPA calc
-				if(printBase.getArrayPosition(index,index2).getExcludeFlag().equals("Y") || 
-				   printBase.getArrayPosition(index,index2).getExcludeFlag().equals("y"))
-				{
-					buffer += " (excluded).\n";
-				}
-				else{buffer += ".\n";}
-			}
+			buffer += gather(printBase.get(index).getRoot());
 		}
 		System.out.println(buffer); // Print the entire database
 		buffer = ""; // clear the buffer
 	}
+
+	/*************************************************************
+	* Method: gather()	*private* 	                     	     *
+	* Purpose: fills buffer with tree					         *
+	*          							                         *
+	* Parameters: TreeNode:		current node	             	 *
+	* Returns: String:         	compiled buffer from tree		 *
+	**************************************************************/
+	private String gather(TreeNode<Course> current)
+	{
+		String buffer = "";
+		if(current == null) {return buffer;} // if fallen off list
+		buffer += current.getDatum().getCourseNumber() + ": " +
+				  current.getDatum().getCourseTitle()  + " (" +
+				  current.getDatum().getCreditCount()  + "). "+
+				  current.getDatum().getTermTaken()	 + " "  +
+				  current.getDatum().getYearTaken()	 + " "  +
+				  current.getDatum().getCourseGrade()  + ""	;
+		// Check to see if excluded from GPA calc
+		if(current.getDatum().getExcludeFlag().equals("Y") || 
+		   current.getDatum().getExcludeFlag().equals("y"))
+		{
+			buffer += " (excluded).\n";
+		}
+		else{buffer += ".\n";}
+		// gather the rest of the left till null
+	    buffer += gather(current.getRight());
+	    // gather the rest of the right till null
+		buffer += gather(current.getLeft());
+		return buffer;
+	}
+
 }

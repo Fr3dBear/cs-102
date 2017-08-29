@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Scanner;
 
@@ -90,7 +91,6 @@ public class Database
 	* Parameters:                                                *
 	*	Course: newCourse: 	course to be added					 *
 	* Returns: Void:  		nothing to be returned			     
-	 * @throws Exception *
 	**************************************************************/
 	public void addCourse(Course newCourse)
 	{
@@ -100,7 +100,14 @@ public class Database
 			// Add new course to lower layer
 			Term lowerList = new Term(newCourse.getYearTaken()+
 					newCourse.getTermTakenRaw());
-			lowerList.append(newCourse);
+			try 
+			{
+			lowerList.add(newCourse);
+			}
+			catch(IOException exc)
+			{
+				System.out.println("Course already exists!");
+			}
 			// Add new linkedList to upper layer
 			courseList.add(0, lowerList);
 		}
@@ -123,16 +130,17 @@ public class Database
 	*	String position: 	index to return						 *
 	* Returns: Course:  data stored in the position requested    *
 	**************************************************************/
-	public Course getArrayPosition(int position, int secondIndex) throws ArrayIndexOutOfBoundsException
-	{
-		if(position <= courseList.size())
-		{
-			Term returnCourse = courseList.get(position);
-			return returnCourse.get(secondIndex);
-		}
-		// Throw an error that tells asker that they picked an invalid array position
-		else{throw new ArrayIndexOutOfBoundsException();}
-	}
+	// TODO: remove?
+//	public Course getArrayPosition(int position, int secondIndex) throws ArrayIndexOutOfBoundsException
+//	{
+//		if(position <= courseList.size())
+//		{
+//			Term returnCourse = courseList.get(position);
+//			return returnCourse.get(secondIndex);
+//		}
+//		// Throw an error that tells asker that they picked an invalid array position
+//		else{throw new ArrayIndexOutOfBoundsException();}
+//	}
 	
 	/*************************************************************
 	* Method: getArraySize()	                                 *
@@ -147,45 +155,22 @@ public class Database
 	}
 	
 	/*************************************************************
-	* Method: getArrayCount()	                                 *
-	* Purpose: Get the size of course List				         *
-	*          							                         *
-	* Parameters: int:			index                            *
-	* Returns: int:             number of elements in list       *
-	**************************************************************/
-	public int getArrayCount(int index)
-	{
-		return (courseList.get(index).size());
-	}
-	
-	/*************************************************************
 	* Method: checkIfTermExists()                                *
-	* Purpose: add course to low level linkedlist		         *
+	* Purpose: add course to low level tree		         *
 	*          							                         *
 	* Parameters: LinkedList, Course:		lowerList courseIn   *
 	* Returns: void:            N/A							     *
 	**************************************************************/
 	private void addCourse(Term lowerList, Course courseIn)
 	{
-		for(int index=0;index<lowerList.size();index++)
+		try
 		{
-			String tempCourse = ((Course) lowerList.get(index)).getCourseNumber();
-			if(tempCourse.equals(courseIn.getCourseNumber()))
-			{ 
-				System.out.print("Course Already Exsists!"); 
-				return;
-			}
-			// check to see if current index is smaller
-			else if(tempCourse.compareToIgnoreCase(courseIn.getCourseNumber()) > 0)
-			{
-				lowerList.add(index, courseIn);
-				
-				return;
-			}
-			else { /* do nothing */ }
+			lowerList.add(courseIn);
 		}
-		// Its the lowest, add to bottom
-		lowerList.append(courseIn);
+		catch(IOException exc)
+		{
+			System.out.println("Course already exists!");
+		}
 	}
 	
 	/*************************************************************
@@ -235,16 +220,16 @@ public class Database
 	* Method: remove()			                                 *
 	* Purpose: remove a course from database       				 *
 	*          							                         *
-	* Parameters: int:			index,index 					 *
+	* Parameters: int: Course:	index, obj to be removed		 *
 	* Returns: void:            N/A							     *
 	**************************************************************/
-	public void remove(int index, int index2)
+	public void remove(int index, Course target)
 	{
 		try
 		{
 			Term lowerList = courseList.get(index);
-			lowerList.remove(index2);
-			if(lowerList.size()==0)
+			lowerList.remove(target);
+			if(lowerList.isEmpty())
 				courseList.remove(index);
 		}
 		catch(IndexOutOfBoundsException exc)

@@ -1,12 +1,11 @@
-import java.util.LinkedList;
+import java.io.IOException;
 
 /*************************************************************
 * Dalton Nofs                                                *
 * Login ID: nofs5491                                         *
 * CS-102, Summer 2017                                        *
 * Programming Assignment 4                                   *
-* ListInterface class: High level linked list of terms for   * 
-* 						database							 *
+* Term class: High level binary tree of terms for database   * 
 **************************************************************/
 public class Term implements TermInterface
 {
@@ -53,44 +52,53 @@ public class Term implements TermInterface
 	}
 
 	/*************************************************************
-	* Method: get()			                                 	 *
+	* Method: getSearched()	                                 	 *
 	* Purpose: get object from linked list at index		         *
 	*          							                         *
-	* Parameters: int:           index                           *
+	* Parameters:           	 N/A                             *
 	* Returns: Object:           Object stored in index			 *
 	**************************************************************/
-	public Course get(int index)
+	public Course getSearched()
 	{
-		return(courseTree.get(index));
+		return(courseTree.getSearched().getDatum());
 	}
+	
+	/*************************************************************
+	* Method: search()			                      	         *
+	* Purpose: searches tree for target					         *
+	*          							                         *
+	* Parameters: T:		 target								 *
+	* Returns: boolean:      if found or not					 *
+	**************************************************************/
+    public boolean search(Course target)
+    {
+    	return courseTree.search(target);
+    }
 
 	/*************************************************************
 	* Method: add()			                                 	 *
 	* Purpose: add a object at specified index			         *        
 	*          							                         *
 	* Parameters: 												 *
-	* 			  int:           index                           *
 	* 			  Course:		 Object to be placed			 *
 	* 															 *
 	* Returns: void:           	 N/A							 *
 	**************************************************************/
-	public void add(int index, Course item)
+	public void add(Course item) throws IOException
 	{
-		courseList.add(index, item);
+		courseTree.add(item);
 	}
 
 	/*************************************************************
 	* Method: remove()			                               	 *
-	* Purpose: remove index postion and return object removed    *
-	*															 *
-	* Notes: calls func that can throw indexoutboundsexception	 *         
+	* Purpose: remove item from tree						     *  
 	*          							                         *
-	* Parameters: int:           index                           *
-	* Returns: Object:           Object removed					 *
+	* Parameters: Course:      course to remove                	 *
+	* Returns: void:           nothing is returned				 *
 	**************************************************************/
-	public Course remove(int index)
+	public void remove(Course item)
 	{
-		return(courseList.remove(index));
+		courseTree.remove(item);
 	}
 
 	/*************************************************************
@@ -103,20 +111,7 @@ public class Term implements TermInterface
 	**************************************************************/
 	public void removeAll()
 	{
-		courseList.removeAll(courseList);
-	}
-	
-	/*************************************************************
-	* Method: append									 		 *
-	* 															 *
-	* Purpose: appends the course to the end of the list	     *
-	*          							                         *
-	* Parameters: Course: 		courseIn              			 *
-	* Returns: void:            N/A								 *
-	**************************************************************/
-	public void append(Course courseIn)
-	{
-		courseList.addLast(courseIn);
+		courseTree.removeAll();
 	}
 	
 	/*************************************************************
@@ -130,5 +125,18 @@ public class Term implements TermInterface
 	public String getTerm()
 	{
 		return(this.term);
+	}
+	
+	/*************************************************************
+	* Method: getRoot()									 		 *
+	* 															 *
+	* Purpose: gets tree root node							     *
+	*          							                         *
+	* Parameters:              N/A	                             *
+	* Returns: TreeNode<T>:	   the root node					 *
+	**************************************************************/
+	public TreeNode<Course> getRoot()
+	{
+		return(this.courseTree.getRoot());
 	}
 }

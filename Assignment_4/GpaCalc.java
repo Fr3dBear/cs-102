@@ -29,48 +29,8 @@ public class GpaCalc
 		
 		for(int index=0; index<targetDatabase.getArraySize(); index++)
 		{
-			int numCourses = targetDatabase.get(index).size();
-			// Loop courses
-			for(int index2=0;index2<numCourses;index2++)
-			{
-				// Check to see if exclude flag is set
-				if(targetDatabase.getArrayPosition(index,index2).getExcludeFlag().
-						toUpperCase().equals("N")								  )
-				{
-					totalCredits += targetDatabase.getArrayPosition(index,index2).getCreditCount();
-					// Get grade and multiply by the credit count for the top of the gpa calc
-					try
-					{
-						// add to the total credit count
-						creditGpa += getClassGrade(targetDatabase.
-								getArrayPosition(index,index2)) *
-								targetDatabase.getArrayPosition(index,index2).
-								getCreditCount();
-					}
-					catch(IllegalArgumentException exc)
-					{
-						if(targetDatabase.getArrayPosition(index,index2).getCourseGrade().toUpperCase().equals("CR") ||
-						   targetDatabase.getArrayPosition(index,index2).getCourseGrade().toUpperCase().equals("I"))
-						{
-							// do nothing
-							throw new IllegalArgumentException(
-									"N/A\nThe grade for " + 
-		   						    targetDatabase.getArrayPosition(index,index2).getCourseNumber() +
-									" is \"" + targetDatabase.getArrayPosition(index,index2).getCourseGrade() +
-									"\" which is not applicable for GPA calculations!\n");
-						}
-						else
-						{
-							throw new IllegalArgumentException(
-									"N/A\nThe grade for " + 
-									targetDatabase.getArrayPosition(index,index2).getCourseNumber() +
-									" is \"" + targetDatabase.getArrayPosition(index,index2).getCourseGrade() +
-									"\" is invalid!\n");
-						}
-					}
-				}
-				else{/* do nothing */}
-			}
+			creditGpa = gatherGpa(targetDatabase.get(index).getRoot());
+			totalCredits = gatherCredits(targetDatabase.get(index).getRoot());
 		}
 		// Calc final database gpa
 		return (creditGpa/totalCredits);
@@ -129,5 +89,85 @@ public class GpaCalc
 		}
 		// Return found grade if exception is not thrown first
 		return courseGrade;
+	}
+	
+	/*************************************************************
+	* Method: gatherGpa()	*private*                     	     *
+	* Purpose: gathers grades from tree					         *
+	*          							                         *
+	* Parameters: TreeNode:		current node	             	 *
+	* Returns: float:         	partal gpa from tree			 *
+	**************************************************************/
+	private float gatherGpa(TreeNode<Course> current)
+	{
+		float gpa = 0; // running count of gpa
+		if(current == null) {return gpa;} // if fallen off list
+		
+		// Check to see if exclude flag is set
+		if(current.getDatum().getExcludeFlag().toUpperCase().equals("N"))
+		{
+			// Get grade and multiply by the credit count for the top of the gpa calc
+			try
+			{
+				// add to the total credit count
+				gpa += (getClassGrade(current.getDatum()) *
+						current.getDatum().getCreditCount());
+			}
+			catch(IllegalArgumentException exc)
+			{
+				if(current.getDatum().getCourseGrade().toUpperCase().equals("CR") ||
+				   current.getDatum().getCourseGrade().toUpperCase().equals("I"))
+				{
+					// do nothing
+					throw new IllegalArgumentException(
+							"N/A\nThe grade for " + 
+							current.getDatum().getCourseNumber() +
+							" is \"" + current.getDatum().getCourseGrade() +
+							"\" which is not applicable for GPA calculations!\n");
+				}
+				else
+				{
+					throw new IllegalArgumentException(
+							"N/A\nThe grade for " + 
+							current.getDatum().getCourseNumber() +
+							" is \"" + current.getDatum().getCourseGrade() +
+							"\" is invalid!\n");
+				}
+			}
+		}
+		else{/* do nothing */}
+		
+		// gather the rest of the left till null
+	    gpa += gatherGpa(current.getRight());
+	    // gather the rest of the right till null
+		gpa += gatherGpa(current.getLeft());
+		return gpa;
+	}
+	
+	/*************************************************************
+	* Method: gatherCredits()	*private*                  	     *
+	* Purpose: gathers total credits from tree			         *
+	*          							                         *
+	* Parameters: TreeNode:		current node	             	 *
+	* Returns: float:         	num of credits					 *
+	**************************************************************/
+	private int gatherCredits(TreeNode<Course> current)
+	{
+		int totalCredits = 0; // running count of credits
+		if(current == null) {return totalCredits;} // if fallen off list
+		
+		// Check to see if exclude flag is set
+		if(current.getDatum().getExcludeFlag().toUpperCase().equals("N"))
+		{
+			totalCredits += current.getDatum().getCreditCount();
+		}
+		else{/* do nothing */}
+		
+		// gather the rest of the left till null
+	    totalCredits += gatherGpa(current.getRight());
+	    // gather the rest of the right till null
+		totalCredits += gatherGpa(current.getLeft());
+		return totalCredits; // return after searching left and right
+		
 	}
 }

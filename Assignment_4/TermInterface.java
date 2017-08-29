@@ -1,9 +1,11 @@
+import java.io.IOException;
+
 /*************************************************************
 * Dalton Nofs                                                *
 * Login ID: nofs5491                                         *
 * CS-102, Summer 2017                                        *
 * Programming Assignment 4                                   *
-* ListInterface class:  general front end for term			 *
+* TermInterface class:  general front end for term			 *
 **************************************************************/
 public interface TermInterface
 {    
@@ -17,45 +19,33 @@ public interface TermInterface
 	public boolean isEmpty();
 	
 	/*************************************************************
-	* Method: size()			                                 *
-	* Purpose: determine the size of linked list		         *
-	*          							                         *
-	* Parameters:                N/A                             *
-	* Returns: int:          	 the size of the array			 *
-	**************************************************************/
-	public int size();
-	
-	/*************************************************************
 	* Method: get()			                                 	 *
 	* Purpose: get object from linked list at index		         *
 	*          							                         *
 	* Parameters: int:           index                           *
 	* Returns: Object:           Object stored in index			 *
 	**************************************************************/
-	public Course get(int index);
+//	public Course get(int index);
 	
 	/*************************************************************
 	* Method: add()			                                 	 *
 	* Purpose: add a object at specified index			         *        
 	*          							                         *
 	* Parameters: 												 *
-	* 			  int:           index                           *
-	* 			  Object:		 Object to be placed			 *
+	* 			  Course:		 Object to be placed			 *
 	* 															 *
 	* Returns: void:           	 N/A							 *
 	**************************************************************/
-	public void add(int index, Course item);
+	public void add(Course item) throws IOException;
 	
 	/*************************************************************
 	* Method: remove()			                               	 *
-	* Purpose: remove index postion and return object removed    *
-	*															 *
-	* Notes: calls func that can throw indexoutboundsexception	 *         
+	* Purpose: remove item from tree						     *  
 	*          							                         *
-	* Parameters: int:           index                           *
-	* Returns: Object:           Object removed					 *
+	* Parameters: Course:      course to remove                	 *
+	* Returns: void:           nothing is returned				 *
 	**************************************************************/
-	public Course remove (int index);
+	public void remove(Course item);
 	
 	/*************************************************************
 	* Method: removeAll									 		 *
@@ -66,16 +56,6 @@ public interface TermInterface
 	* Returns: void:           N/A								 *
 	**************************************************************/
 	public void removeAll();
-	
-	/*************************************************************
-	* Method: append									 		 *
-	* 															 *
-	* Purpose: appends the course to the end of the list	     *
-	*          							                         *
-	* Parameters: Course: courseIn  				             *
-	* Returns: void:            N/A								 *
-	**************************************************************/
-	public void append(Course courseIn);
 	
 	/*************************************************************
 	* Method: removeAll									 		 *

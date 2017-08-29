@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.NoSuchElementException;
 
 /*************************************************************
@@ -10,6 +11,7 @@ import java.util.NoSuchElementException;
 class Tree <T extends Comparable<T>>
 {
     TreeNode<T> root; // root for the tree
+    TreeNode<T> searchedNode; // node holder for searched node
     
     /*************************************************************
 	* Method: Tree()			                      	         *
@@ -30,7 +32,7 @@ class Tree <T extends Comparable<T>>
 	* Parameters: T:			type to add                      *
 	* Returns: void:            N/A							     *
 	**************************************************************/
-    public void add(T target)
+    public void add(T target) throws IOException
     {
     	root=add(target,root);
     }
@@ -42,7 +44,7 @@ class Tree <T extends Comparable<T>>
 	* Parameters: T,TreeNode:	target, current node             *
 	* Returns: TreeNode<T>:            TreeNode obj				 *
 	**************************************************************/
-    private TreeNode<T> add(T target, TreeNode<T> current)
+    private TreeNode<T> add(T target, TreeNode<T> current) throws IOException
     {
     	// if null its last so just add to end
 		if(current == null)
@@ -53,6 +55,8 @@ class Tree <T extends Comparable<T>>
 		    leaf.setRight(null);
 		    return leaf;
 		}
+		if(search(target))
+			throw new IOException("Course already exists");
 		if(current.getDatum().compareTo(target)<0) // cont add to right branch
 		   current.setRight( add(target, current.getRight()) );
 		else									   // cont add to left branch
@@ -73,7 +77,7 @@ class Tree <T extends Comparable<T>>
     }
     
     /*************************************************************
-	* Method: search()	*private*                      	         *
+	* Method: search()	*private*                      	     *
 	* Purpose: recursive search fucn					         *
 	*          							                         *
 	* Parameters: T,TreeNode:	target, current node             *
@@ -83,8 +87,11 @@ class Tree <T extends Comparable<T>>
     {
 		if(current == null) {return false;} // if fallen off list
 		if(current.getDatum().equals(target)) // base case
+		{
+			searchedNode = current;
 		    return true;
-		if(current.getDatum().compareTo(target)<0) // continue search
+		}
+	    if(current.getDatum().compareTo(target)<0) // continue search
 		    return search(target,  current.getRight());
 		else
 		    return search(target, current.getLeft()); // continue search
@@ -147,5 +154,40 @@ class Tree <T extends Comparable<T>>
     	else
     		return false;
     }
-
+    
+    /*************************************************************
+	* Method: removeAll()		                      	         *
+	* Purpose: remove all nodes							         *
+	*          							                         *
+	* Parameters: void:			N/A					             *
+	* Returns: void:			N/A								 *
+	**************************************************************/
+    public void removeAll()
+    {
+    	root = null;
+    }
+    
+    /*************************************************************
+   	* Method: getSearched()		                      	         *
+   	* Purpose: get node for last searched		   		         *
+   	*          							                         *
+   	* Parameters: void:			N/A					             *
+   	* Returns: T:				data from last node searched	 *
+   	**************************************************************/
+    public TreeNode<T> getSearched()
+    {
+    	return  searchedNode;
+    }
+    
+    /*************************************************************
+   	* Method: getRoot()			                      	         *
+   	* Purpose: get node for last searched		   		         *
+   	*          							                         *
+   	* Parameters: void:			N/A					             *
+   	* Returns: TreeNode<T>:		the head node of the tree		 *
+   	**************************************************************/
+    public TreeNode<T> getRoot()
+    {
+    	return  root;
+    }
 }
