@@ -1,6 +1,5 @@
 import java.text.ParseException;
 import java.util.InputMismatchException;
-import java.util.LinkedList;
 import java.util.Scanner;
 
 /*************************************************************
@@ -220,21 +219,29 @@ public class Prog4
 		String termInput = console.next(); // capture the term to delete from
 		console.nextLine(); // Clear the scanner's buffer by going to the return char
 							//     still viable if a newline char is pasted into terminal
-		// return results are stored resut[1] = index 1, reult[2] index2
 		for(int index=0;index<returnResults.size();)
 		{
 			// Print the course as long as it matches year and term
-			if(termInput.equalsIgnoreCase(targetDatabase.get(index).getRoot().
-					getDatum().getTermTakenRaw()))
+			if(termInput.equalsIgnoreCase(returnResults.get(index).getYearTaken()+
+					returnResults.get(index).getTermTakenRaw()))
 			{
 				printCourse(returnResults, index);
 				System.out.println("Would you like to delete(y/n):");
 				userInput = console.next();
 				if(userInput.equalsIgnoreCase("y"))
 				{
-					// remove course from lower list
-					targetDatabase.remove(index, returnResults.get(index));
-					deletedCounter++;
+					for(int index2=0;index2<targetDatabase.getDatabaseSize();index2++)
+					{
+						if(targetDatabase.get(index2).getTerm().equals(
+								returnResults.get(index).getYearTaken()+
+								returnResults.get(index).getTermTakenRaw()))
+						{
+							// remove course from lower list
+							targetDatabase.remove(index2, returnResults.get(index));
+							deletedCounter++;
+							break; // exit for loop as term search is done
+						}
+					}
 				}
 				else{/* do nothing */}
 				promptCtr++;
@@ -282,19 +289,27 @@ public class Prog4
 		for(int index=0;index<returnResults.size();)
 		{
 			// Print the course as long as it matches year and term
-			if(termInput.equalsIgnoreCase(targetDatabase.get(index).getRoot().
-					getDatum().getTermTakenRaw()))
+			if(termInput.equalsIgnoreCase(returnResults.get(index).getYearTaken()+
+					returnResults.get(index).getTermTakenRaw()))
 			{
 				printCourse(returnResults, index);
 				System.out.println("Would you like to Edit?(y/n):");
 				userInput = console.next();
 				if(userInput.equalsIgnoreCase("y"))
 				{
-					// remove course from lower list then re add the modified
-					targetDatabase.remove(index, returnResults.get(index));
-					// create a new scanner as the old one causes problems
-					userAddCourse(targetDatabase, new Scanner(System.in));
-					editedCounter++;
+					for(int index2=0;index2<targetDatabase.getDatabaseSize();index2++)
+					{
+						if(targetDatabase.get(index2).getTerm().equals(
+								returnResults.get(index).getYearTaken()+
+								returnResults.get(index).getTermTakenRaw()))
+						{
+							// remove course from lower list then re add the modified
+							targetDatabase.remove(index2, returnResults.get(index));
+							// create a new scanner as the old one causes problems
+							userAddCourse(targetDatabase, new Scanner(System.in));
+							editedCounter++;
+						}
+					}
 				}
 				else{/* do nothing */}
 				promptCtr++;

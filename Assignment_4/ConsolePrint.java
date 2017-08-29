@@ -19,7 +19,7 @@ public class ConsolePrint
 	{
 		String buffer = ""; // Buffer string for data to be sent to console
 		int arrayCount = 0; // local arraycount for cycling through the database
-		arrayCount = printBase.getArraySize();
+		arrayCount = printBase.getDatabaseSize();
 		
 		// Check the status of the database
 		if(arrayCount <= 0)

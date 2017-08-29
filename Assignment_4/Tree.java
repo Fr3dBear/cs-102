@@ -86,7 +86,7 @@ class Tree <T extends Comparable<T>>
     private boolean search(T target, TreeNode<T> current)
     {
 		if(current == null) {return false;} // if fallen off list
-		if(current.getDatum().equals(target)) // base case
+		if(current.getDatum().compareTo(target) == 0) // base case
 		{
 			searchedNode = current;
 		    return true;
@@ -116,7 +116,7 @@ class Tree <T extends Comparable<T>>
 	* Parameters: T,TreeNode:	target, current node             *
 	* Returns: TreeNode<T>:     fixed treeNode					 *
 	**************************************************************/
-    private TreeNode<T> remove(T target, TreeNode<T> current)
+    private TreeNode<T> remove(T target, TreeNode<T> current) throws NoSuchElementException
     {
         if(current==null) // check to see if fell off list
         	throw new NoSuchElementException();

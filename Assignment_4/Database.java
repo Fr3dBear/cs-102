@@ -143,13 +143,13 @@ public class Database
 //	}
 	
 	/*************************************************************
-	* Method: getArraySize()	                                 *
-	* Purpose: Read file and store data into courseArray         *
+	* Method: getDatabaseSize()	                                 *
+	* Purpose: return the size of the database			         *
 	*          							                         *
 	* Parameters:                N/A                             *
-	* Returns: int:              the size of the array	         *
+	* Returns: int:              the size of the database        *
 	**************************************************************/
-	public int getArraySize()
+	public int getDatabaseSize()
 	{
 		return courseList.size();
 	}
@@ -209,7 +209,7 @@ public class Database
 	* Purpose: get list position		         				 *
 	*          							                         *
 	* Parameters: int:			index   						 *
-	* Returns: Object:          N/A							     *
+	* Returns: Object:          item stored at index		     *
 	**************************************************************/
 	public Term get(int index)
 	{

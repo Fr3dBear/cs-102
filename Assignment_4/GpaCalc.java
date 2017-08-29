@@ -22,12 +22,12 @@ public class GpaCalc
 		double creditGpa = 0;  // Running total for credit * class grade
 		
 		// Check the status of the database
-		if(targetDatabase.getArraySize() <= 0)
+		if(targetDatabase.getDatabaseSize() <= 0)
 		{
 			throw new IllegalArgumentException("N/A\nDatabase is empty!\n");
 		}
 		
-		for(int index=0; index<targetDatabase.getArraySize(); index++)
+		for(int index=0; index<targetDatabase.getDatabaseSize(); index++)
 		{
 			creditGpa = gatherGpa(targetDatabase.get(index).getRoot());
 			totalCredits = gatherCredits(targetDatabase.get(index).getRoot());

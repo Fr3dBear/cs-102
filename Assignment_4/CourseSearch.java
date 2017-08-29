@@ -1,5 +1,3 @@
-import java.util.LinkedList;
-
 /**************************************************************
 * Dalton Nofs                                                 *
 * Login ID: nofs5491                                          *
@@ -24,7 +22,7 @@ public class CourseSearch
 		String buffer = ""; // Out buffer
 		
 		// Search given database for a matching string
-		for(int index=0; index<targetDatabase.getArraySize(); index++)
+		for(int index=0; index<targetDatabase.getDatabaseSize(); index++)
 		{
 			buffer += gather(courseTitle, targetDatabase.get(index).getRoot());
 		}
@@ -56,7 +54,7 @@ public class CourseSearch
 		tempCourse.setCourseNumber(courseNumber);
 		
 		// Search given database for a matching string
-		for(int index=0; index<targetDatabase.getArraySize(); index++)
+		for(int index=0; index<targetDatabase.getDatabaseSize(); index++)
 		{
 			if(targetDatabase.get(index).search(tempCourse))
 			{
