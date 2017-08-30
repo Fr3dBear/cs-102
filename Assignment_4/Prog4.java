@@ -1,3 +1,8 @@
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.ParseException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -11,6 +16,13 @@ import java.util.Scanner;
 **************************************************************/
 public class Prog4 
 {
+	/*************************************************************
+	* Method: main()			                                 *
+	* Purpose: main entry for the program	 			         *
+	*          							                         *
+	* Parameters: String[]:			 string array of prog args	 *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
 	public static void main (String[] args)
 	{
 		ConsolePrint localPrinter = new ConsolePrint(); 	// local printer for general printing
@@ -33,16 +45,16 @@ public class Prog4
 								"\n    9 --> Reload Database"              +
 								"\n    0 --> Exit"						   ;
 		
-		final int choice1 = 1; // Course by number
-		final int choice2 = 2; // Course by title
-		final int choice3 = 3; // Print all records
-		final int choice4 = 4; // Computer GPAs
-		final int choice5 = 5; // Add a course
-		final int choice6 = 6; // Remove a course
-		final int choice7 = 7; // Edit a course
-		final int choice8 = 8; // Store Database
-		final int choice9 = 9; // Reload Database
-		final int choice0 = 0; // Exit
+		final int srchCrsNum = 1; // Course by number
+		final int srchTitle  = 2; // Course by title
+		final int prntData   = 3; // Print all records
+		final int cmptGpa    = 4; // Computer GPAs
+		final int addCrs     = 5; // Add a course
+		final int rmCrs 	 = 6; // Remove a course
+		final int editCrs    = 7; // Edit a course
+		final int strData    = 8; // Store Database
+		final int reLdData   = 9; // Reload Database
+		final int exit       = 0; // Exit
 		try
 		{
 			// attempt to load the database with file location
@@ -77,7 +89,7 @@ public class Prog4
 			
 			switch (userInput)
 			{
-				case choice1: System.out.println("What is the Number of the course?: ");
+				case srchCrsNum: System.out.println("What is the Number of the course?: ");
 						try
 						{
 							courseSearcher.findByNumber(console.next(), courseData);
@@ -88,7 +100,7 @@ public class Prog4
 						}
 						break;
 				
-				case choice2: System.out.println("What is the title of the course?: ");
+				case srchTitle: System.out.println("What is the title of the course?: ");
 						try
 						{
 							courseSearcher.findByTitle(console.next(), courseData);
@@ -99,7 +111,7 @@ public class Prog4
 						}
 						break;
 				
-				case choice3: System.out.println("Printing all records\n");
+				case prntData: System.out.println("Printing all records\n");
 						try
 						{
 							localPrinter.printDatabase(courseData);
@@ -110,7 +122,7 @@ public class Prog4
 						}
 						break;
 				
-				case choice4: System.out.print("Students GPA: ");
+				case cmptGpa: System.out.print("Students GPA: ");
 						try
 						{
 							System.out.format("%.2f\n\n",gpaCalculator.calcGpa(courseData));
@@ -121,27 +133,28 @@ public class Prog4
 						}
 						break;
 				
-				case choice5: userAddCourse(courseData, console);
-							  break;
+				case addCrs: userAddCourse(courseData, console);
+						break;
 				
-				case choice6: userRemoveCourse(courseData, console, courseSearcher);
-							  break;
+				case rmCrs: userRemoveCourse(courseData, console, courseSearcher);
+						break;
 							  
-				case choice7: userEditCourse(courseData, console, courseSearcher);
-							  break;
+				case editCrs: userEditCourse(courseData, console, courseSearcher);
+						break;
 							  
-				case choice8: userStore(courseData, console);
-							  break;
+				case strData: System.out.println("Storing database!");
+				    	userStore(courseData, console);
+					    break;
 				
-				case choice9: userReload(courseData, console);
-							  break;
+				case reLdData: userReload(courseData, console);
+						break;
 						
-				case choice0: System.out.println("Exiting");
-							  System.exit(0); // exit successfully
+				case exit: System.out.println("Exiting");
+						System.exit(0); // exit successfully
 				
 				// Catch all (commands that are not 1-4,9)
 				default: System.out.println("The command you entered is not recognized.\n");
-						 break;
+						break;
 			}
 		}
 	}
@@ -345,7 +358,7 @@ public class Prog4
 		String userInput = console.next(); // users course input
 		console.nextLine(); // Clear the scanner's buffer by going to the return char
 							//    still viable if a newline char is pasted into terminal
-		
+		targetDatabase.storeDatabase(userInput);
 	}
 	
 	/*************************************************************

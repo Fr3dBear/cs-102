@@ -1,8 +1,11 @@
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.ParseException;
 import java.util.Scanner;
 
@@ -97,7 +100,6 @@ public class Database
 	public void storeDatabase(String fileName)
 	{
 		String buffer = ""; // buffer for file write
-		File file = new File(fileName); // out-put file
 		// local arraycount for cycling through the database
 		int arrayCount = this.getDatabaseSize();
 		
@@ -114,10 +116,11 @@ public class Database
 		}
 		try
 		{
-			// init writer
-		    BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-		    writer.write(buffer); // write buffer to file
-		    writer.close(); // close the writer
+			// configure the writer for writing to file
+			Writer writer = new BufferedWriter(new OutputStreamWriter(
+		              new FileOutputStream(fileName), "utf-8"));
+			writer.write(buffer); // try writing to the file
+			writer.close(); // Close the file
 		}
 		catch(IOException exc)
 		{
@@ -285,13 +288,14 @@ public class Database
 		String buffer = "";
 		if(current == null) {return buffer;} // if fallen off list
 		// follow format yyyytt/cs-num/cred/title/grade/include
-		buffer += current.getDatum().getYearTaken()	   + "/" +
+		buffer += current.getDatum().getYearTaken()	   +
 				  current.getDatum().getTermTakenRaw() + "/" +
 				  current.getDatum().getCourseNumber() + "/" +
 				  current.getDatum().getCreditCount()  + "/" +
 				  current.getDatum().getCourseTitle()  + "/" +
 				  current.getDatum().getCourseGrade()  + "/" +
-				  current.getDatum().getExcludeFlag()  + "\n";
+				  current.getDatum().getExcludeFlag()  + "\r\n";
+						// for return in file use \r\n
 		// gather the rest of the left till null
 	    buffer += gatherPrint(current.getRight());
 	    // gather the rest of the right till null
