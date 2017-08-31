@@ -99,6 +99,8 @@ public class LinkedList<T> implements ListInterface<T>
 		// iterate through list while counter < size and current != null
 		for(int lpindx = 0; lpindx < size() || current != null; lpindx++)
 		{
+			if(lpindx == 0)
+				return head;
 			if(lpindx == index)
 			{
 				return current;	// return node in desired index
@@ -127,33 +129,33 @@ public class LinkedList<T> implements ListInterface<T>
 	public void add(int index, T data)
 	{
 		Node<T> target; 			  // Target insertion location
-		Node<T> insert = new Node<T>(); // New inserted node
+		Node<T> splice = new Node<T>(); // New inserted node
 		
 		// load data into node
-		insert.setData(data);
+		splice.setData(data);
 		
 		if(head!=null)
 		{
 			target = this.getNode(index); // get the target index's node
 			// check to see if 1st in list needs to be replaced
-			if(target.getPrevious()==head)
+			if(target.getPrevious()==null)
 			{
-				head = insert;
-				insert.setPrevious(head);
+				head = splice;
+				splice.setPrevious(head);
 			}
 			// if not 1st in list then set insert to target previous
 			else
 			{
-				insert.setPrevious(target.getPrevious()); // transfer previous
+				splice.setPrevious(target.getPrevious()); // transfer previous
 			}
-			insert.setNext(target); // set insert to point to target
-			target.setPrevious(insert); // set targets previous to insert
+			splice.setNext(target); // set insert to point to target
+			target.setPrevious(splice); // set targets previous to insert
 		}
 		else
 		{
 			// list is empty
-			head = insert;
-			insert.setPrevious(head);
+			head = splice;
+			splice.setPrevious(head);
 		}
 	}
 	

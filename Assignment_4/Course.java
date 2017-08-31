@@ -35,8 +35,10 @@ public class Course implements Comparable<Course>
 		return termTaken;
 	}
 	public String getTermTakenRaw()
-	{
-		return termTakenRaw;
+	{	
+		// raw form, only 01,02,03,04 is stored, however
+		//     for true raw we want year as well so return it
+		return (yearTaken+termTakenRaw);
 	}
 	public String getYearTaken()
 	{
@@ -74,21 +76,24 @@ public class Course implements Comparable<Course>
 	public void setTermTaken(String termTaken) throws ParseException
 	{
 		// Set term taken for raw then find the word value
-		this.termTakenRaw = termTaken;
 		if(termTaken.equals("01"))
 		{
+			this.termTakenRaw = "01";
 			this.termTaken = "Winter";
 		}
 		else if(termTaken.equals("02"))
 		{
+			this.termTakenRaw = "02";
 			this.termTaken = "Spring";
 		}
 		else if(termTaken.equals("03"))
 		{
+			this.termTakenRaw = "03";
 			this.termTaken = "Summer";
 		}
 		else if(termTaken.equals("04"))
 		{
+			this.termTakenRaw = "04";
 			this.termTaken = "Fall";
 		}
 		// Throw flag to show data passed is incorrect

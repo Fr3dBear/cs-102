@@ -176,7 +176,13 @@ public class Prog4
 		Course tempCourse = new Course(); // course to be added
 		String dateString = ""; // Temp string for separating the year and semester
 		userInput = console.nextLine(); // get users input
+		if(userInput == "") 
+		{
+			System.out.println("You didn't enter anything");
+			return;
+		}
 		Scanner pieces = new Scanner(userInput); // Scanner for spliting string
+		
 		
 		// setTermTaken, and setExcludeFlag will throw a parse error
 		//     if data sent is not in the correct format
@@ -207,7 +213,7 @@ public class Prog4
 			return;
 		}
 		targetDatabase.addCourse(tempCourse);
-		System.out.println("\n"); // extra space for prettyness
+		System.out.println("\n"); // extra space for prettiness
 	}
 	
 	/*************************************************************
@@ -256,7 +262,6 @@ public class Prog4
 					for(int index2=0;index2<targetDatabase.getDatabaseSize();index2++)
 					{
 						if(targetDatabase.get(index2).getTerm().equals(
-								returnResults.get(index).getYearTaken()+
 								returnResults.get(index).getTermTakenRaw()))
 						{
 							// remove course from lower list
@@ -323,7 +328,6 @@ public class Prog4
 					for(int index2=0;index2<targetDatabase.getDatabaseSize();index2++)
 					{
 						if(targetDatabase.get(index2).getTerm().equals(
-								returnResults.get(index).getYearTaken()+
 								returnResults.get(index).getTermTakenRaw()))
 						{
 							// remove course from lower list then re add the modified
@@ -354,7 +358,7 @@ public class Prog4
 	**************************************************************/
 	private static void userStore(Database targetDatabase, Scanner console)
 	{
-		System.out.println("Enter a file name to save too: ");
+		System.out.println("Enter a file name to save to: ");
 		String userInput = console.next(); // users course input
 		console.nextLine(); // Clear the scanner's buffer by going to the return char
 							//    still viable if a newline char is pasted into terminal

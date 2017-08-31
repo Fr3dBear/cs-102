@@ -144,8 +144,7 @@ public class Database
 		if(courseList.isEmpty())
 		{
 			// Add new course to lower layer
-			Term lowerList = new Term(newCourse.getYearTaken()+
-					newCourse.getTermTakenRaw());
+			Term lowerList = new Term(newCourse.getTermTakenRaw());
 			try 
 			{
 			lowerList.add(newCourse);
@@ -211,7 +210,7 @@ public class Database
 		for(int index=0;index<courseList.size();index++)
 		{
 			// Create the 201704 string
-			String tempCourse = courseIn.getYearTaken()+courseIn.getTermTakenRaw();
+			String tempCourse = courseIn.getTermTakenRaw();
 			if(tempCourse.equals(courseList.get(index).getTerm()))
 			{
 				/* term already exists so just return index */
@@ -219,14 +218,12 @@ public class Database
 			}
 			else if ((courseList.get(index).getTerm().compareToIgnoreCase(tempCourse) > 0))
 			{
-				courseList.add(index, new Term(courseIn.getYearTaken()+
-						courseIn.getTermTakenRaw()));
+				courseList.add(index, new Term(courseIn.getTermTakenRaw()));
 				return index;
 			}
 		}
 		// small then all add to end
-		courseList.addLast(new Term(courseIn.getYearTaken()+
-						   courseIn.getTermTakenRaw()));
+		courseList.addLast(new Term(courseIn.getTermTakenRaw()));
 		return (courseList.size()-1);
 	}
 	
