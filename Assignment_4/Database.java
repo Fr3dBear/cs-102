@@ -39,12 +39,12 @@ public class Database
 		}
 		catch(ArrayIndexOutOfBoundsException exc)
 		{
-			System.out.println("No arguments given!");
+			System.out.println("No arguments given! Terminating program!");
 			System.exit(1);
 		}
 		catch(FileNotFoundException exc)
 		{
-			System.out.println("File could not be opened.");
+			System.out.println("File could not be opened. Terminating program!");
 			System.exit(2);
 		}
 		
@@ -73,18 +73,18 @@ public class Database
 				tempCourse.setCourseTitle(pieces.next());			 // Set the course title
 				tempCourse.setCourseGrade(pieces.next());			 // Set the course grade
 				tempCourse.setExcludeFlag(pieces.next());			 // Set the exclude flag
+				// Add the new course to the database
+				this.addCourse(tempCourse);
 			}
 			catch(ParseException exc)
 			{
 				System.out.println(exc.getMessage() + "\nError occured on line: " + fileLine +
-								   " Line is being ignored and not added to array.");
+								   " : Line is being ignored and not added to array.");
 			}
-			// Add the new course to the database
-			this.addCourse(tempCourse);
 		}
 		if(courseList.isEmpty())
 		{
-			throw new IllegalArgumentException("The database is empty!");
+			throw new IllegalArgumentException("\nThe database is empty!\n");
 		}
 		else {/* do nothing */}
 	}
@@ -285,8 +285,7 @@ public class Database
 		String buffer = "";
 		if(current == null) {return buffer;} // if fallen off list
 		// follow format yyyytt/cs-num/cred/title/grade/include
-		buffer += current.getDatum().getYearTaken()	   +
-				  current.getDatum().getTermTakenRaw() + "/" +
+		buffer += current.getDatum().getTermTakenRaw() + "/" +
 				  current.getDatum().getCourseNumber() + "/" +
 				  current.getDatum().getCreditCount()  + "/" +
 				  current.getDatum().getCourseTitle()  + "/" +

@@ -251,8 +251,7 @@ public class Prog4
 		for(int index=0;index<returnResults.size();)
 		{
 			// Print the course as long as it matches year and term
-			if(termInput.equalsIgnoreCase(returnResults.get(index).getYearTaken()+
-					returnResults.get(index).getTermTakenRaw()))
+			if(termInput.equalsIgnoreCase(returnResults.get(index).getTermTakenRaw()))
 			{
 				printCourse(returnResults, index);
 				System.out.println("Would you like to delete(y/n):");
@@ -313,12 +312,11 @@ public class Prog4
 		String termInput = console.next(); // capture the term to delete from
 		console.nextLine(); // Clear the scanner's buffer by going to the return char
 							//     still viable if a newline char is pasted into terminal
-		// return results are stored resut[1] = index 1, reult[2] index2
+
 		for(int index=0;index<returnResults.size();)
 		{
 			// Print the course as long as it matches year and term
-			if(termInput.equalsIgnoreCase(returnResults.get(index).getYearTaken()+
-					returnResults.get(index).getTermTakenRaw()))
+			if(termInput.equalsIgnoreCase(returnResults.get(index).getTermTakenRaw()))
 			{
 				printCourse(returnResults, index);
 				System.out.println("Would you like to Edit?(y/n):");
@@ -330,7 +328,7 @@ public class Prog4
 						if(targetDatabase.get(index2).getTerm().equals(
 								returnResults.get(index).getTermTakenRaw()))
 						{
-							// remove course from lower list then re add the modified
+							// remove course from lower list
 							targetDatabase.remove(index2, returnResults.get(index));
 							// create a new scanner as the old one causes problems
 							userAddCourse(targetDatabase, new Scanner(System.in));
@@ -362,7 +360,14 @@ public class Prog4
 		String userInput = console.next(); // users course input
 		console.nextLine(); // Clear the scanner's buffer by going to the return char
 							//    still viable if a newline char is pasted into terminal
-		targetDatabase.storeDatabase(userInput);
+		try
+		{
+			targetDatabase.storeDatabase(userInput);
+		}
+		catch(IllegalArgumentException exc)
+		{
+			System.out.println("\nAre you trying to break me? There is nothing to store!\n");
+		}
 	}
 	
 	/*************************************************************

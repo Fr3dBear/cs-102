@@ -47,6 +47,9 @@ public class ConsolePrint
 	{
 		String buffer = "";
 		if(current == null) {return buffer;} // if fallen off list
+		// gather the rest of the right till null
+	    buffer += gather(current.getRight());
+	    
 		buffer += current.getDatum().getCourseNumber() + ": " +
 				  current.getDatum().getCourseTitle()  + " (" +
 				  current.getDatum().getCreditCount()  + "). "+
@@ -60,9 +63,7 @@ public class ConsolePrint
 			buffer += " (excluded).\n";
 		}
 		else{buffer += ".\n";}
-		// gather the rest of the left till null
-	    buffer += gather(current.getRight());
-	    // gather the rest of the right till null
+	    // gather the rest of the left till null
 		buffer += gather(current.getLeft());
 		return buffer;
 	}

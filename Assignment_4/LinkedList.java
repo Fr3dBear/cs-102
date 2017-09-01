@@ -61,25 +61,19 @@ public class LinkedList<T> implements ListInterface<T>
 	**************************************************************/
 	public T get(int index) throws IndexOutOfBoundsException
 	{
-		Node<T> current = head; // the current node for count check
-		if((index < 0) || (index >= size())) // check for bad index
+		Node<T> current = head; // set current to starting point
+		Node<T> previous = null; // holder for previous node
+		// walk array to find index
+		while((current != null) && (index != 0))
 		{
-			throw new IndexOutOfBoundsException("Index not in limits!");
+		    index--;
+		    previous = current;
+		    current = current.getNext();
 		}
-		// iterate through list while counter < size and current != null
-		for(int lpindx = 0; lpindx < size() || current != null; lpindx++)
-		{
-			if(lpindx == index)
-			{
-				return current.getData(); // get object stored in desired index
-			}
-			else
-			{
-				current = current.getNext(); // get next node
-			}
-		}
-		// Index was not found so throw error
-		throw new IndexOutOfBoundsException("Index not found!");
+		// index is not in array
+		if (index != 0)
+		    throw new IndexOutOfBoundsException();
+		return current.getData(); // return the data found
 	}
 	
 	/*************************************************************
@@ -91,27 +85,19 @@ public class LinkedList<T> implements ListInterface<T>
 	**************************************************************/
 	private Node<T> getNode(int index) throws IndexOutOfBoundsException
 	{
-		Node<T> current = head; // the current node for count check
-		if((index < 0) || (index >= size())) // check for bad index
+		Node<T> current = head; // set current to starting point
+		Node<T> previous = null; // holder for previous node
+		// walk array to find index
+		while((current != null) && (index != 0))
 		{
-			throw new IndexOutOfBoundsException("Index not in limits!");
+		    index--;
+		    previous = current;
+		    current = current.getNext();
 		}
-		// iterate through list while counter < size and current != null
-		for(int lpindx = 0; lpindx < size() || current != null; lpindx++)
-		{
-			if(lpindx == 0)
-				return head;
-			if(lpindx == index)
-			{
-				return current;	// return node in desired index
-			}
-			else
-			{
-				current = current.getNext(); // get next node
-			}
-		}
-		// Index was not found so throw error
-		throw new IndexOutOfBoundsException("Index not found!");
+		// index is not in array
+		if (index != 0)
+		    throw new IndexOutOfBoundsException();
+		return current; // return the node found
 	}
 	
 	/*************************************************************
@@ -128,35 +114,17 @@ public class LinkedList<T> implements ListInterface<T>
 	**************************************************************/
 	public void add(int index, T data)
 	{
-		Node<T> target; 			  // Target insertion location
-		Node<T> splice = new Node<T>(); // New inserted node
+		// get the correct node
+		Node<T> current = this.getNode(index);
 		
-		// load data into node
+		// create the new splice node
+		Node<T> splice = new Node<T>();
 		splice.setData(data);
-		
-		if(head!=null)
-		{
-			target = this.getNode(index); // get the target index's node
-			// check to see if 1st in list needs to be replaced
-			if(target.getPrevious()==null)
-			{
-				head = splice;
-				splice.setPrevious(head);
-			}
-			// if not 1st in list then set insert to target previous
-			else
-			{
-				splice.setPrevious(target.getPrevious()); // transfer previous
-			}
-			splice.setNext(target); // set insert to point to target
-			target.setPrevious(splice); // set targets previous to insert
-		}
+		splice.setNext(current);
+		if(current == null)
+		    head = splice;
 		else
-		{
-			// list is empty
-			head = splice;
-			splice.setPrevious(head);
-		}
+			current.getPrevious().setNext(splice);
 	}
 	
 	/*************************************************************
@@ -168,43 +136,25 @@ public class LinkedList<T> implements ListInterface<T>
 	* Parameters: int:           index                           *
 	* Returns: Object:           Object removed					 *
 	**************************************************************/
-	public T remove(int index)
+	public T remove(int index) throws IndexOutOfBoundsException
 	{
-		Node<T> target; // target to be removed
-		
-		target = this.getNode(index); // get target node
-		// check if first on list but not last
-		if(target.getPrevious() == head && target.getNext() != null)
+		Node<T> current = head; // current in the walk
+		Node<T> previous = null; // previous in the walk
+		// walk the node list
+		while((current != null) && (index != 0))
 		{
-			// set target to point to head and head to point to target
-			target.getNext().setPrevious(head);
-			head = target.getNext();
+		    index--;
+		    previous = current;
+		    current = current.getNext();
 		}
-		// check if last on list or first on list
-		else if(target.getNext() != null && target.getPrevious() != null)
-		{
-			// set targets next node to targets previous node
-			target.getNext().setPrevious(target.getPrevious());
-			// set targets previous node to targets next node
-			target.getPrevious().setNext(target.getNext());
-		}
-		// check if last one list
-		else if(target.getNext() == null && target.getPrevious() != head)
-		{
-			target.getPrevious().setNext(null);
-		}
-		// if last one list
-		else if(target.getNext() == null && target.getPrevious() == head)
-		{
-			head = null;
-		}
-		
-		// destoy target node
-		target.setNext(null);
-		target.setPrevious(null);
-		
-		// return object that was removed
-		return target.getData();
+		if(current == null)
+		    throw new IndexOutOfBoundsException();
+		if(previous == null)
+		    head = current.getNext();
+		else
+		    previous.setNext(current.getNext());
+		return (current.getData());
+
 	}
 	
 	/*************************************************************
