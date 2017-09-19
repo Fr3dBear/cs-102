@@ -1,9 +1,16 @@
 import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField; 
 
 /*************************************************************
 * Dalton Nofs                                                *
@@ -100,127 +107,6 @@ public class Prog5
 			return;
 		}
 		targetDatabase.addCourse(tempCourse);
-	}
-	
-	/*************************************************************
-	* Method: userRemoveCourse()	                             *
-	* Purpose: remove a user class to database 			         *
-	*          							                         *
-	* Parameters: Database: Scanner: targetbase, console scanner *
-	* Returns: void:           		 N/A				         *
-	**************************************************************/
-	static void userRemoveCourse(Database targetDatabase)
-	{
-		int promptCtr = 0; // Counter for seeing how many time the user was prompted
-		String userInput = JOptionPane.showInputDialog(
-				"Please enter the course number you would like to remove:");
-		LinkedList<Course> returnResults; // Results from the course search
-		int deletedCounter = 0; // counter for number of courses deleted
-		try
-		{
-			returnResults = new CourseSearch().findByNumber(userInput, targetDatabase);
-		} 
-		catch (NoSuchFieldException exc)
-		{ 
-			UserInterface.sendWarning("No results were found!", "ERROR");
-			return;
-		}
-		String termInput = JOptionPane.showInputDialog(
-				"Please enter the term you would like to remove it from " +
-				"(yyyytt): ");
-		for(int index=0;index<returnResults.size();)
-		{
-			// Print the course as long as it matches year and term
-			if(termInput.equalsIgnoreCase(returnResults.get(index).getTermTakenRaw()))
-			{
-				if(JOptionPane.showConfirmDialog(null, 
-						 "Would you like to delete: " + 
-						 printCourse(returnResults, index)) == 0)
-				{
-					for(int index2=0;index2<targetDatabase.getDatabaseSize();index2++)
-					{
-						if(targetDatabase.get(index2).getTerm().equals(
-								returnResults.get(index).getTermTakenRaw()))
-						{
-							// remove course from lower list
-							targetDatabase.remove(index2, returnResults.get(index));
-							deletedCounter++;
-							break; // exit for loop as term search is done
-						}
-					}
-				}
-				else{/* do nothing */}
-				promptCtr++;
-			}
-			index += 2; // because of storage in results add 2 instead of 1
-		}
-		if(promptCtr>0)
-			UserInterface.sendMessage("You deleted " + deletedCounter + 
-					" course(s)!\n", "INFO");
-		else
-			UserInterface.sendMessage(
-					"There were no courses with the specified term!\n", "INFO");
-	}
-	
-	/*************************************************************
-	* Method: userRemoveCourse()	                             *
-	* Purpose: remove a user class to database 			         *
-	*          							                         *
-	* Parameters: Database: Scanner: targetbase, console,  		 *
-	* Returns: void:           		 N/A				         *
-	**************************************************************/
-	static void userEditCourse(Database targetDatabase)
-	{
-		int promptCtr = 0; // Counter for seeing how many time the user was prompted
-		String userInput = JOptionPane.showInputDialog(
-				"Please enter the course number you would like to edit:");
-		LinkedList<Course> returnResults = null; // Results from the course search
-		int editedCounter = 0; // For the number of edited courses
-		try
-		{
-			returnResults = new CourseSearch().findByNumber(userInput, targetDatabase);
-		} 
-		catch (NoSuchFieldException exc)
-		{ 
-			UserInterface.sendMessage("No results were found!", "INFO");
-			return;
-		}
-		String termInput = JOptionPane.showInputDialog(
-				"Please enter the term you would like to remove it from " +
-				"(yyyytt): ");
-
-		for(int index=0;index<returnResults.size();)
-		{
-			// Print the course as long as it matches year and term
-			if(termInput.equalsIgnoreCase(returnResults.get(index).getTermTakenRaw()))
-			{
-				if(JOptionPane.showConfirmDialog(null, "Would you like to Edit: " +
-						printCourse(returnResults, index)) == 0)
-				{
-					for(int index2=0;index2<targetDatabase.getDatabaseSize();index2++)
-					{
-						if(targetDatabase.get(index2).getTerm().equals(
-								returnResults.get(index).getTermTakenRaw()))
-						{
-							// remove course from lower list
-							targetDatabase.remove(index2, returnResults.get(index));
-							// create a new scanner as the old one causes problems
-							userAddCourse(targetDatabase);
-							editedCounter++;
-						}
-					}
-				}
-				else{/* do nothing */}
-				promptCtr++;
-			}
-			index += 2; // because of storage in results add 2 instead of 1
-		}
-		if(promptCtr>0)
-			UserInterface.sendMessage("You edited " + editedCounter +
-					" course(s)!\n","INFO");
-		else
-			UserInterface.sendWarning(
-					"There were no courses with the specified term!\n", "ERROR");
 	}
 	
 	/*************************************************************
@@ -375,5 +261,281 @@ public class Prog5
 			// some exception happened show it to user
 			UserInterface.sendWarning(exc.getMessage(),"ERROR");
 		}
+	}
+	
+	/*************************************************************
+	* Method: userEditCourse()		                             *
+	* Purpose: edit a user class to database , frontend public   *
+	*          							                         *
+	* Parameters: Database: Scanner: targetbase, console,  		 *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
+	static void userEditCourse(Database targetDatabase)
+	{
+		createEditSearchWindow();
+	}
+	
+	/*************************************************************
+	* Method: userEditCourseWork()	                             *
+	* Purpose: edit the course, the background work		         *
+	*          							                         *
+	* Parameters: Search: JFrame:    search, searchWindow 		 *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
+	private static void userEditCourseWork(String search)
+	{
+		String[] split = search.split("/"); // split the entry into 2
+		String userInput; // get first part
+		String termInput; // get second part
+		try
+		{
+			userInput = split[0]; // get first part
+			termInput = split[1]; // get second part
+		}
+		catch( ArrayIndexOutOfBoundsException exc)
+		{
+			UserInterface.sendWarning("You didn't enter enough information", "ERROR");
+			UserInterface.getMainWindow().setVisible(true);
+			return;
+		}
+		int promptCtr = 0; // Counter for seeing how many time the user was prompted
+		LinkedList<Course> returnResults = null; // Results from the course search
+		int editedCounter = 0; // For the number of edited courses
+		Database targetDatabase = Prog5.courseData; // get the database
+		try
+		{
+			returnResults = new CourseSearch().findByNumber(userInput, targetDatabase);
+		} 
+		catch (NoSuchFieldException exc)
+		{ 
+			UserInterface.sendMessage("No results were found!", "INFO");
+			return;
+		}
+		for(int index=0;index<returnResults.size();)
+		{
+			// Print the course as long as it matches year and term
+			if(termInput.equalsIgnoreCase(returnResults.get(index).getTermTakenRaw()))
+			{
+				if(JOptionPane.showConfirmDialog(null, "Would you like to Edit: " +
+						printCourse(returnResults, index)) == 0)
+				{
+					for(int index2=0;index2<targetDatabase.getDatabaseSize();index2++)
+					{
+						if(targetDatabase.get(index2).getTerm().equals(
+								returnResults.get(index).getTermTakenRaw()))
+						{
+							// remove course from lower list
+							targetDatabase.remove(index2, returnResults.get(index));
+							userAddCourse(targetDatabase);
+							editedCounter++;
+						}
+					}
+				}
+				else{/* do nothing */}
+				promptCtr++;
+			}
+			index += 2; // because of storage in results add 2 instead of 1
+		}
+		if(promptCtr>0)
+			UserInterface.sendMessage("You edited " + editedCounter +
+					" course(s)!\n","INFO");
+		else
+			UserInterface.sendWarning(
+					"There were no courses with the specified term!\n", "ERROR");
+		UserInterface.getMainWindow().setVisible(true);
+	}
+	
+	/*************************************************************
+	* Method: createEditSearchWindow()	                         *
+	* Purpose: window for entry of course info		             *
+	* Parameters: void:				 N/A						 *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
+	private static void createEditSearchWindow()
+	{
+		// New window for search info
+		JFrame searchWindow = new JFrame("Edit SearchWindow");
+		
+		searchWindow.setSize(400,100); // set the size
+		GridLayout aGrid = new GridLayout(3,2,0,0); // config the layout
+		searchWindow.setLayout(aGrid); // set window layout
+		
+		// create buttons
+		JButton crsSearch 	= new JButton("Search");
+		JButton close = new JButton("Close");
+		
+		// create lables
+		JLabel crsNumLbl = new JLabel("Course Number:");
+		JLabel crsSemesterLbl = new JLabel("Course Semester (yyyytt):");
+		
+		// create 
+		JTextField crsNum = new JTextField();
+		JTextField crsSemester = new JTextField();
+		
+		// add objects to the window's
+		searchWindow.add(crsNumLbl);
+		searchWindow.add(crsNum);
+		searchWindow.add(crsSemesterLbl);
+		searchWindow.add(crsSemester);
+		searchWindow.add(crsSearch);
+		searchWindow.add(close);
+		
+		crsSearch.addActionListener(new ActionListener()
+		{
+			  public void actionPerformed(ActionEvent e)
+			  {
+				  userEditCourseWork(crsNum.getText() + "/" + crsSemester.getText());
+				  searchWindow.dispose();
+			  }
+		});
+		
+		close.addActionListener(new ActionListener()
+		{
+			  public void actionPerformed(ActionEvent e)
+			  {
+				  searchWindow.dispose();
+				  UserInterface.getMainWindow().setVisible(true);
+			  }
+		});
+		
+		searchWindow.setVisible(true);
+	}
+	
+	/*************************************************************
+	* Method: userRemoveCourse()	                             *
+	* Purpose: remove a user class to database , frontend public *
+	*          							                         *
+	* Parameters: Database: 		 targetbase,		  		 *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
+	static void userRemoveCourse(Database targetDatabase)
+	{
+		createRemoveSearchWindow();
+	}
+	
+	/*************************************************************
+	* Method: userRemoveCourseWork()	                         *
+	* Purpose: background work for the remove course             *
+	* Parameters: void:				 N/A						 *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
+	private static void userRemoveCourseWork(String search)
+	{
+		String[] split = search.split("/"); // split the entry into 2
+		String userInput; // get first part
+		String termInput; // get second part
+		try
+		{
+			userInput = split[0]; // get first part
+			termInput = split[1]; // get second part
+		}
+		catch( ArrayIndexOutOfBoundsException exc)
+		{
+			UserInterface.sendWarning("You didn't enter enough information", "ERROR");
+			UserInterface.getMainWindow().setVisible(true);
+			return;
+		}
+		int promptCtr = 0; // Counter for seeing how many time the user was prompted
+		LinkedList<Course> returnResults = null; // Results from the course search
+		int deletedCounter = 0; // For the number of edited courses
+		Database targetDatabase = Prog5.courseData; // get the database
+		try
+		{
+			returnResults = new CourseSearch().findByNumber(userInput, targetDatabase);
+		} 
+		catch (NoSuchFieldException exc)
+		{ 
+			UserInterface.sendWarning("No results were found!", "ERROR");
+			return;
+		}
+		for(int index=0;index<returnResults.size();)
+		{
+			// Print the course as long as it matches year and term
+			if(termInput.equalsIgnoreCase(returnResults.get(index).getTermTakenRaw()))
+			{
+				if(JOptionPane.showConfirmDialog(null, 
+						 "Would you like to delete: " + 
+						 printCourse(returnResults, index)) == 0)
+				{
+					for(int index2=0;index2<targetDatabase.getDatabaseSize();index2++)
+					{
+						if(targetDatabase.get(index2).getTerm().equals(
+								returnResults.get(index).getTermTakenRaw()))
+						{
+							// remove course from lower list
+							targetDatabase.remove(index2, returnResults.get(index));
+							deletedCounter++;
+							break; // exit for loop as term search is done
+						}
+					}
+				}
+				else{/* do nothing */}
+				promptCtr++;
+			}
+			index += 2; // because of storage in results add 2 instead of 1
+		}
+		if(promptCtr>0)
+			UserInterface.sendMessage("You deleted " + deletedCounter + 
+					" course(s)!\n", "INFO");
+		else
+			UserInterface.sendMessage(
+					"There were no courses with the specified term!\n", "INFO");
+		UserInterface.getMainWindow().setVisible(true);
+	}
+	
+	/*************************************************************
+	* Method: createRemoveSearchWindow()                         *
+	* Purpose: window for entry of course info		             *
+	* Parameters: void:				 N/A						 *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
+	private static void createRemoveSearchWindow()
+	{
+		// New window for search info
+		JFrame searchWindow = new JFrame("Remove SearchWindow");
+		
+		searchWindow.setSize(400,100); // set the size
+		GridLayout aGrid = new GridLayout(3,2,0,0); // config the layout
+		searchWindow.setLayout(aGrid); // set window layout
+		
+		// create buttons
+		JButton crsSearch 	= new JButton("Search");
+		JButton close = new JButton("Close");
+		
+		// create lables
+		JLabel crsNumLbl = new JLabel("Course Number:");
+		JLabel crsSemesterLbl = new JLabel("Course Semester (yyyytt):");
+		
+		// create 
+		JTextField crsNum = new JTextField();
+		JTextField crsSemester = new JTextField();
+		
+		// add objects to the window's
+		searchWindow.add(crsNumLbl);
+		searchWindow.add(crsNum);
+		searchWindow.add(crsSemesterLbl);
+		searchWindow.add(crsSemester);
+		searchWindow.add(crsSearch);
+		searchWindow.add(close);
+		
+		crsSearch.addActionListener(new ActionListener()
+		{
+			  public void actionPerformed(ActionEvent e)
+			  {
+				  userRemoveCourseWork(crsNum.getText() + "/" + crsSemester.getText());
+				  searchWindow.dispose();
+			  }
+		});
+		
+		close.addActionListener(new ActionListener()
+		{
+			  public void actionPerformed(ActionEvent e)
+			  {
+				  searchWindow.dispose();
+				  UserInterface.getMainWindow().setVisible(true);
+			  }
+		});
+		
+		searchWindow.setVisible(true);
 	}
 }

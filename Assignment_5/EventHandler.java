@@ -38,6 +38,7 @@ public interface EventHandler
 					// ask user for course number
 					String inputValue = JOptionPane.showInputDialog("Enter the Course Number:");
 					Prog5.searchCourseNumInt(inputValue); // search for num
+					UserInterface.getMainWindow().setVisible(true); // make visable again
 				}
 				catch( NullPointerException exc ) { /* do nothing user just hit cancel */ }
 			}
@@ -49,6 +50,7 @@ public interface EventHandler
 					// ask user for course title
 					String inputValue = JOptionPane.showInputDialog("Enter the Course Title:");
 					Prog5.searchCourseTitleInt(inputValue); // search for title
+					UserInterface.getMainWindow().setVisible(true);
 				}
 				catch( NullPointerException exc ) { /* do nothing user just hit cancel */ }
 			}
@@ -56,11 +58,13 @@ public interface EventHandler
 			else if(((JButton)action.getSource()).getText().equals("Print all records"))
 			{
 				Prog5.printDatabaseInt(); // print the database out
+				UserInterface.getMainWindow().setVisible(true);
 			}
 			// if compute gpa is pressed
 			else if(((JButton)action.getSource()).getText().equals("Compute GPA"))
 			{
 				Prog5.calculateGPAInt(); // print the calculated gpa
+				UserInterface.getMainWindow().setVisible(true);
 			}
 			// if add course is pressed
 			else if(((JButton)action.getSource()).getText().equals("Add Course"))
@@ -68,6 +72,7 @@ public interface EventHandler
 				try
 				{
 					Prog5.userAddCourse(Prog5.courseData); // start the add course prompts
+					UserInterface.getMainWindow().setVisible(true);
 				}
 				catch( NullPointerException exc ) { /* do nothing user just hit cancel */ }
 			}
@@ -95,6 +100,7 @@ public interface EventHandler
 				try
 				{
 					Prog5.userStore(Prog5.courseData); // start the store prompts
+					UserInterface.getMainWindow().setVisible(true);
 				}
 				catch( NullPointerException exc ) { /* do nothing user just hit cancel */ }
 			}
@@ -104,6 +110,7 @@ public interface EventHandler
 				try
 				{
 					Prog5.userReload(Prog5.courseData); // start the reload prompts
+					UserInterface.getMainWindow().setVisible(true);
 				}
 				catch( NullPointerException exc ) { /* do nothing user just hit cancel */ }
 			}
@@ -121,7 +128,7 @@ public interface EventHandler
 				UserInterface.getMainWindow().setVisible(true);
 			}
 			// unhide the ui so the user can pick a new task
-			UserInterface.getMainWindow().setVisible(true);
+			//UserInterface.getMainWindow().setVisible(true);
 		}
 	}
 }
