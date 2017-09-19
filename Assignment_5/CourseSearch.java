@@ -28,8 +28,7 @@ public class CourseSearch
 		}
 		if(!buffer.equals(""))
 		{
-			System.out.println("Results:");
-			System.out.println(buffer);
+			UserInterface.sendMessage(buffer, "Results");
 			buffer = ""; // clear buffer
 		}
 		// Throw exception as no match was found
@@ -77,8 +76,7 @@ public class CourseSearch
 		}
 		if(!buffer.equals(""))
 		{
-			System.out.println("Results:");
-			System.out.println(buffer);
+			UserInterface.sendMessage(buffer, "Results");
 			buffer = ""; // clear buffer
 			return(returnBuff);
 		}

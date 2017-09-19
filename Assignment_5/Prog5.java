@@ -1,6 +1,9 @@
+import java.awt.Component;
 import java.text.ParseException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+
+import javax.swing.JOptionPane;
 
 /*************************************************************
 * Dalton Nofs                                                *
@@ -11,6 +14,8 @@ import java.util.Scanner;
 **************************************************************/
 public class Prog5 
 {
+	static Database courseData = new Database(); // Create a database to import to
+	
 	/*************************************************************
 	* Method: main()			                                 *
 	* Purpose: main entry for the program	 			         *
@@ -20,38 +25,9 @@ public class Prog5
 	**************************************************************/
 	public static void main (String[] args)
 	{
-		ConsolePrint localPrinter = new ConsolePrint(); 	// local printer for general printing
-		CourseSearch courseSearcher = new CourseSearch(); 	// Database searcher for course's
-		GpaCalc gpaCalculator = new GpaCalc();				// Calcualtor for gpa via database
-		Scanner console = new Scanner(System.in); // Scanner for parsing the console
 		UserInterface ui = new UserInterface(); // init the ui
 		ui.addMainWindow();		 // config for main window config
-		int userInput = 0; 						  // User input for selecting option
-		Database courseData = new Database();     // Create a database to import to
-		// String for printing the greeting message
-		String greetingString = "Welcome to the CS-102 Transcript Program" +
-								"\nCurrent available commands:" 		   +
-								"\n    1 --> Search for a course number"   +
-								"\n    2 --> Search course titles"         +
-								"\n    3 --> Print all records" 		   +
-								"\n    4 --> Compute GPA"	 			   +
-								"\n    5 --> Add Course"				   +
-								"\n    6 --> Remove Course"				   +
-								"\n    7 --> Edit Course"                  +
-								"\n    8 --> Store Database"			   +
-								"\n    9 --> Reload Database"              +
-								"\n    0 --> Exit"						   ;
 		
-		final int srchCrsNum = 1; // Course by number
-		final int srchTitle  = 2; // Course by title
-		final int prntData   = 3; // Print all records
-		final int cmptGpa    = 4; // Computer GPAs
-		final int addCrs     = 5; // Add a course
-		final int rmCrs 	 = 6; // Remove a course
-		final int editCrs    = 7; // Edit a course
-		final int strData    = 8; // Store Database
-		final int reLdData   = 9; // Reload Database
-		final int exit       = 0; // Exit
 		try
 		{
 			// attempt to load the database with file location
@@ -60,99 +36,13 @@ public class Prog5
 		}
 		catch(ArrayIndexOutOfBoundsException exc)
 		{
-			System.out.println("The database is full, " + exc.getMessage() + " course(s) were loaded!");
+			UserInterface.sendWarning("The database is full, " + exc.getMessage() +
+					" course(s) were loaded!", "ERROR");
 		}
 		catch(IllegalArgumentException exc)
 		{
-			System.out.println(exc.getMessage());
-		}
-		
-		System.out.println("Database has been loaded!\n");
-		
-		while(true)
-		{
-			System.out.println(greetingString); // Print welcome message
-			try
-			{
-				userInput = console.nextInt();
-				console.nextLine(); // Clear the scanner's buffer by going to the return char
-									//    still viable if a newline char is pasted into terminal
-			}
-			catch(InputMismatchException exc)
-			{
-				// Just change the user input to use the default catch
-				userInput = 0;
-			}
-			
-			switch (userInput)
-			{
-				case srchCrsNum: System.out.println("What is the Number of the course?: ");
-						try
-						{
-							courseSearcher.findByNumber(console.next(), courseData);
-						}
-						catch(NoSuchFieldException exc)
-						{
-							System.out.println("Course was not found!\n");
-						}
-						break;
-				
-				case srchTitle: System.out.println("What is the title of the course?: ");
-						try
-						{
-							courseSearcher.findByTitle(console.next(), courseData);
-						}
-						catch(NoSuchFieldException exc)
-						{
-							System.out.println("Course was not found!\n");
-						}
-						break;
-				
-				case prntData: System.out.println("Printing all records\n");
-						try
-						{
-							localPrinter.printDatabase(courseData);
-						}
-						catch(IllegalArgumentException exc)
-						{
-							System.out.println(exc.getMessage());
-						}
-						break;
-				
-				case cmptGpa: System.out.print("Students GPA: ");
-						try
-						{
-							System.out.format("%.2f\n\n",gpaCalculator.calcGpa(courseData));
-						}
-						catch(IllegalArgumentException exc)
-						{
-							System.out.println(exc.getMessage());
-						}
-						break;
-				
-				case addCrs: userAddCourse(courseData, console);
-						break;
-				
-				case rmCrs: userRemoveCourse(courseData, console, courseSearcher);
-						break;
-							  
-				case editCrs: userEditCourse(courseData, console, courseSearcher);
-						break;
-							  
-				case strData: System.out.println("Storing database!");
-				    	userStore(courseData, console);
-					    break;
-				
-				case reLdData: userReload(courseData, console);
-						break;
-						
-				case exit: System.out.println("Exiting");
-						System.exit(0); // exit successfully
-				
-				// Catch all (commands that are not 1-4,9)
-				default: System.out.println("The command you entered is not recognized.\n");
-						break;
-			}
+			// there was an error show it to user
+			UserInterface.sendWarning(exc.getMessage(),"ERROR");
 		}
 	}
 	
@@ -160,22 +50,22 @@ public class Prog5
 	* Method: userAddClass()	                                 *
 	* Purpose: add a user class to database 			         *
 	*          							                         *
-	* Parameters: Database: Scanner: targetbase, console scanner *
+	* Parameters: Database: targetbase							 *
 	* Returns: void:           		 N/A				         *
 	**************************************************************/
-	private static void userAddCourse(Database targetDatabase, Scanner console)
+	static void userAddCourse(Database targetDatabase)
 	{
-		System.out.println("Enter your class in the following format:\n"  +
+		String userInput = JOptionPane.showInputDialog(
+							"Enter your class in the following format:\n"  +
 						   "201003/CE-320/4/Microcomputers I/B+/N\n"      +
 						   "yyyytt/corsnum/credit/title/grade/excluded\n" +
-						   "yyyy is year tt is term (01,02,03,04)     "  );
-		String userInput = ""; // User input string to be feed to addCourse
+						   "yyyy is year tt is term (01,02,03,04)     ",
+						   "New Course");
 		Course tempCourse = new Course(); // course to be added
 		String dateString = ""; // Temp string for separating the year and semester
-		userInput = console.nextLine(); // get users input
 		if(userInput == "") 
 		{
-			System.out.println("You didn't enter anything");
+			UserInterface.sendWarning("You didn't enter anything", "Really?");
 			return;
 		}
 		Scanner pieces = new Scanner(userInput); // Scanner for spliting string
@@ -201,16 +91,15 @@ public class Prog5
 		}
 		catch(ParseException exc)
 		{
-			System.out.println(exc.getMessage() + " Your input is ignored!\n");
+			UserInterface.sendWarning(exc.getMessage() + " Your input is ignored!\n", "Error");
 			return;
 		}
 		catch(InputMismatchException exc) 
 		{
-			System.out.println(exc.getMessage()+"your input is ignored\n");
+			UserInterface.sendWarning(exc.getMessage()+"your input is ignored\n", "Error");
 			return;
 		}
 		targetDatabase.addCourse(tempCourse);
-		System.out.println("\n"); // extra space for prettiness
 	}
 	
 	/*************************************************************
@@ -220,40 +109,33 @@ public class Prog5
 	* Parameters: Database: Scanner: targetbase, console scanner *
 	* Returns: void:           		 N/A				         *
 	**************************************************************/
-	private static void userRemoveCourse(Database targetDatabase, Scanner console,
-			CourseSearch courseSearcher)
+	static void userRemoveCourse(Database targetDatabase)
 	{
 		int promptCtr = 0; // Counter for seeing how many time the user was prompted
-		System.out.println("Please enter the course number you would like to remove:");
-		String userInput = console.next(); // users course input
-		console.nextLine(); // Clear the scanner's buffer by going to the return char
-							//    still viable if a newline char is pasted into terminal
+		String userInput = JOptionPane.showInputDialog(
+				"Please enter the course number you would like to remove:");
 		LinkedList<Course> returnResults; // Results from the course search
 		int deletedCounter = 0; // counter for number of courses deleted
 		try
 		{
-			System.out.print("Course search, ");
-			returnResults = courseSearcher.findByNumber(userInput, targetDatabase);
+			returnResults = new CourseSearch().findByNumber(userInput, targetDatabase);
 		} 
 		catch (NoSuchFieldException exc)
 		{ 
-			System.out.println("No results were found!\n");
+			UserInterface.sendWarning("No results were found!", "ERROR");
 			return;
 		}
-		System.out.println("Please enter the term you would like to remove it from " +
-				           "(yyyytt): ");
-		String termInput = console.next(); // capture the term to delete from
-		console.nextLine(); // Clear the scanner's buffer by going to the return char
-							//     still viable if a newline char is pasted into terminal
+		String termInput = JOptionPane.showInputDialog(
+				"Please enter the term you would like to remove it from " +
+				"(yyyytt): ");
 		for(int index=0;index<returnResults.size();)
 		{
 			// Print the course as long as it matches year and term
 			if(termInput.equalsIgnoreCase(returnResults.get(index).getTermTakenRaw()))
 			{
-				printCourse(returnResults, index);
-				System.out.println("Would you like to delete(y/n):");
-				userInput = console.next();
-				if(userInput.equalsIgnoreCase("y"))
+				if(JOptionPane.showConfirmDialog(null, 
+						 "Would you like to delete: " + 
+						 printCourse(returnResults, index)) == 0)
 				{
 					for(int index2=0;index2<targetDatabase.getDatabaseSize();index2++)
 					{
@@ -273,9 +155,11 @@ public class Prog5
 			index += 2; // because of storage in results add 2 instead of 1
 		}
 		if(promptCtr>0)
-			System.out.println("You deleted " + deletedCounter + " course(s)!\n");
+			UserInterface.sendMessage("You deleted " + deletedCounter + 
+					" course(s)!\n", "INFO");
 		else
-			System.out.println("There were no courses with the specified term!\n");
+			UserInterface.sendMessage(
+					"There were no courses with the specified term!\n", "INFO");
 	}
 	
 	/*************************************************************
@@ -285,40 +169,33 @@ public class Prog5
 	* Parameters: Database: Scanner: targetbase, console,  		 *
 	* Returns: void:           		 N/A				         *
 	**************************************************************/
-	private static void userEditCourse(Database targetDatabase, Scanner console, CourseSearch courseSearcher)
+	static void userEditCourse(Database targetDatabase)
 	{
 		int promptCtr = 0; // Counter for seeing how many time the user was prompted
-		System.out.println("Please enter the course number you would like to edit:");
-		String userInput = console.next(); // users course input
-		console.nextLine(); // Clear the scanner's buffer by going to the return char
-							//    still viable if a newline char is pasted into terminal
+		String userInput = JOptionPane.showInputDialog(
+				"Please enter the course number you would like to edit:");
 		LinkedList<Course> returnResults = null; // Results from the course search
 		int editedCounter = 0; // For the number of edited courses
 		try
 		{
-			System.out.print("Course search, ");
-			returnResults = courseSearcher.findByNumber(userInput, targetDatabase);
+			returnResults = new CourseSearch().findByNumber(userInput, targetDatabase);
 		} 
 		catch (NoSuchFieldException exc)
 		{ 
-			System.out.println("No results were found!\n");
+			UserInterface.sendMessage("No results were found!", "INFO");
 			return;
 		}
-		System.out.println("Please enter the term you would like to edit it in " +
-				           "(yyyytt): ");
-		String termInput = console.next(); // capture the term to delete from
-		console.nextLine(); // Clear the scanner's buffer by going to the return char
-							//     still viable if a newline char is pasted into terminal
+		String termInput = JOptionPane.showInputDialog(
+				"Please enter the term you would like to remove it from " +
+				"(yyyytt): ");
 
 		for(int index=0;index<returnResults.size();)
 		{
 			// Print the course as long as it matches year and term
 			if(termInput.equalsIgnoreCase(returnResults.get(index).getTermTakenRaw()))
 			{
-				printCourse(returnResults, index);
-				System.out.println("Would you like to Edit?(y/n):");
-				userInput = console.next();
-				if(userInput.equalsIgnoreCase("y"))
+				if(JOptionPane.showConfirmDialog(null, "Would you like to Edit: " +
+						printCourse(returnResults, index)) == 0)
 				{
 					for(int index2=0;index2<targetDatabase.getDatabaseSize();index2++)
 					{
@@ -328,7 +205,7 @@ public class Prog5
 							// remove course from lower list
 							targetDatabase.remove(index2, returnResults.get(index));
 							// create a new scanner as the old one causes problems
-							userAddCourse(targetDatabase, new Scanner(System.in));
+							userAddCourse(targetDatabase);
 							editedCounter++;
 						}
 					}
@@ -339,31 +216,32 @@ public class Prog5
 			index += 2; // because of storage in results add 2 instead of 1
 		}
 		if(promptCtr>0)
-			System.out.println("You edited " + editedCounter + " course(s)!\n");
+			UserInterface.sendMessage("You edited " + editedCounter +
+					" course(s)!\n","INFO");
 		else
-			System.out.println("There were no courses with the specified term!\n");
+			UserInterface.sendWarning(
+					"There were no courses with the specified term!\n", "ERROR");
 	}
 	
 	/*************************************************************
 	* Method: userStore()	                                 	 *
 	* Purpose: store database to file					         *
 	*          							                         *
-	* Parameters: Database: Scanner: targetbase, console scanner *
+	* Parameters: Database: 		 targetbase 				 *
 	* Returns: void:           		 N/A				         *
 	**************************************************************/
-	private static void userStore(Database targetDatabase, Scanner console)
+	static void userStore(Database targetDatabase)
 	{
-		System.out.println("Enter a file name to save to: ");
-		String userInput = console.next(); // users course input
-		console.nextLine(); // Clear the scanner's buffer by going to the return char
-							//    still viable if a newline char is pasted into terminal
+		String userInput = JOptionPane.showInputDialog("Enter a file name to save to: ");
 		try
 		{
 			targetDatabase.storeDatabase(userInput);
 		}
 		catch(IllegalArgumentException exc)
 		{
-			System.out.println("\nAre you trying to break me? There is nothing to store!\n");
+			UserInterface.sendMessage(
+					"\nAre you trying to break me? There is nothing to store!\n",
+					"ERROR");
 		}
 	}
 	
@@ -371,16 +249,13 @@ public class Prog5
 	* Method: userReload()		                                 *
 	* Purpose: reload a database from file	 			         *
 	*          							                         *
-	* Parameters: Database: Scanner: targetbase, console scanner *
+	* Parameters: Database: 		 targetbase					 *
 	* Returns: void:           		 N/A				         *
 	**************************************************************/
-	private static void userReload(Database targetDatabase, Scanner console)
+	static void userReload(Database targetDatabase)
 	{
-		System.out.println("Enter a file to load, within the local directory: ");
-		String userInput = console.next(); // users course input
-		console.nextLine(); // Clear the scanner's buffer by going to the return char
-							//    still viable if a newline char is pasted into terminal
-		
+		String userInput = JOptionPane.showInputDialog(
+				"Enter a file to load, within the local directory: ");
 		// Cast to string array to pass to load database
 		String userInputArray[] = {userInput};
 		targetDatabase.removeAll(); // destroy old data
@@ -392,33 +267,113 @@ public class Prog5
 		}
 		catch(ArrayIndexOutOfBoundsException exc)
 		{
-			System.out.println("The database is full, " + exc.getMessage() + " course(s) were loaded!");
+			UserInterface.sendWarning("The database is full, " + exc.getMessage() +
+					" course(s) were loaded!", "ERROR");
 		}
 		catch(IllegalArgumentException exc)
 		{
-			System.out.println(exc.getMessage());
+			UserInterface.sendWarning(exc.getMessage(), "ERROR");
 		}
-		System.out.println("\nDatabase reloaded!\n");
+		UserInterface.sendMessage("Database reloaded!", "INFO");
 	}
 	
 	/*************************************************************
 	* Method: printCourse()	 		                             *
-	* Purpose: print a singular course		 			         *
+	* Purpose: compile a single course into a buffer	         *
 	* 															 *
 	* NOTE: this was making all my methods too long so...        *
 	*          							                         *
 	* Parameters: Database: LinkedList: Index: 					 *
 	* 				targetDatabase, returnResults, index 		 *
-	* Returns: void:           		 N/A				         *
+	* Returns: String:           	the info in the index        *
 	**************************************************************/
-	private static void printCourse(LinkedList<Course> returnResults, int index)
+	private static String printCourse(LinkedList<Course> returnResults, int index)
 	{
-		System.out.print(
+		String buffer =
 			returnResults.get(index).getCourseNumber() 	+ ": " +
 			returnResults.get(index).getCourseTitle()  	+ " (" +
 			returnResults.get(index).getCreditCount()  	+ "). "+
 			returnResults.get(index).getTermTaken()		+ " "  +
 			returnResults.get(index).getYearTaken()	 	+ " "  +
-			returnResults.get(index).getCourseGrade()  	+ "\n"	);
+			returnResults.get(index).getCourseGrade()  	+ "\n" ;
+		return buffer;
+	}
+	
+	/*************************************************************
+	* Method: searchCourseNumInt() 		                         *
+	* Purpose: search for num interface for UI 			         *
+	* Parameters: String			 Course num					 *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
+	public static void searchCourseNumInt(String userInput)
+	{
+		try
+		{
+			// this prints internally so just junk the return we dont need it
+			new CourseSearch().findByNumber(userInput, courseData);
+		} 
+		catch (NoSuchFieldException e)
+		{
+		    UserInterface.sendWarning("Course does not exist!", "ERROR");
+		}
+	}
+	
+	/*************************************************************
+	* Method: searchCourseTitleInt() 		                     *
+	* Purpose: search interface for title for UI		         *
+	* Parameters: String			 Course title				 *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
+	public static void searchCourseTitleInt(String userInput)
+	{
+		try
+		{
+			// this prints internally so just junk the return we dont need it
+			new CourseSearch().findByTitle(userInput, courseData);
+		} 
+		catch (NoSuchFieldException e)
+		{
+		    UserInterface.sendWarning("Course does not exist!", "ERROR");
+		}
+	}
+	
+	/*************************************************************
+	* Method: printDatabaseInt() 		                         *
+	* Purpose: printDatabase interface for UI			         *
+	* Parameters: void:				 N/A						 *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
+	public static void printDatabaseInt()
+	{
+		try
+		{
+			// this does the actual printing
+			new ConsolePrint().printDatabase(courseData);
+		}
+		catch(IllegalArgumentException exc)
+		{
+			// some exception happened show it to user
+			UserInterface.sendWarning(exc.getMessage(),"ERROR");
+		}
+	}
+	
+	/*************************************************************
+	* Method: calculateGPAInt() 		                         *
+	* Purpose: gpa calc interface for UI			             *
+	* Parameters: void:				 N/A						 *
+	* Returns: void:           		 N/A				         *
+	**************************************************************/
+	public static void calculateGPAInt()
+	{
+		try
+		{
+			String GPA = String.format("%.2f\n\n",new GpaCalc().calcGpa(courseData));
+			UserInterface.sendMessage("GPA is: " + GPA, "GPA Calculation");
+		}
+		catch(IllegalArgumentException exc)
+		{
+			// some exception happened show it to user
+			UserInterface.sendWarning(exc.getMessage(),"ERROR");
+		}
 	}
 }

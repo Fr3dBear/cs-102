@@ -108,24 +108,42 @@ public class LinkedList<T> implements ListInterface<T>
 	*          							                         *
 	* Parameters: 												 *
 	* 			  int:           index                           *
-	* 			  Object:		 Object to be placed			 *
+	* 			  T:			 Object to be placed			 *
 	* 															 *
 	* Returns: void:           	 N/A							 *
 	**************************************************************/
-	public void add(int index, T data)
-	{
-		// get the correct node
-		Node<T> current = this.getNode(index);
-		
-		// create the new splice node
-		Node<T> splice = new Node<T>();
-		splice.setData(data);
-		splice.setNext(current);
-		if(current == null)
-		    head = splice;
-		else
-			current.getPrevious().setNext(splice);
-	}
+    public void add(int index, T datum)
+    {
+    	head = add(index,datum,head);
+    }
+    
+    /*************************************************************
+	* Method: add()			  *PRIVATE*                        	 *
+	* Purpose: add a object at specified index (recursive)       *
+	*															 *
+	* Notes: calls func that can throw indexoutboundsexception	 *         
+	*          							                         *
+	* Parameters: 												 *
+	* 			  int:           index                           *
+	* 			  T:			 Object to be placed			 *
+	* 			  Node<T>:		 current node					 *
+	* 															 *
+	* Returns: Node<T>:          the current node				 *
+	**************************************************************/
+    private Node<T> add(int index, T datum, Node<T> current)
+    {
+    	if(index == 0) // check for head
+    	{
+		    Node<T> splice = new Node<T>(); // create and fill splice
+		    splice.setData(datum);
+		    splice.setNext(current);
+		    return(splice);
+    	}
+		if( current == null ) // check to make sure we havent fallen off list
+			throw new IndexOutOfBoundsException();
+		current.setNext( add(index--,datum, current.getNext()) ); // build rest of list
+		return current;
+    }
 	
 	/*************************************************************
 	* Method: remove()			                               	 *

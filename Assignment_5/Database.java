@@ -39,12 +39,14 @@ public class Database
 		}
 		catch(ArrayIndexOutOfBoundsException exc)
 		{
-			System.out.println("No arguments given! Terminating program!");
+			UserInterface.sendWarning("No arguments given! Terminating program!",
+					"ERROR");
 			System.exit(1);
 		}
 		catch(FileNotFoundException exc)
 		{
-			System.out.println("File could not be opened. Terminating program!");
+			UserInterface.sendWarning(
+					"File could not be opened. Terminating program!","ERROR");
 			System.exit(2);
 		}
 		
@@ -78,13 +80,14 @@ public class Database
 			}
 			catch(ParseException exc)
 			{
-				System.out.println(exc.getMessage() + "\nError occured on line: " + fileLine +
-								   " : Line is being ignored and not added to array.");
+				UserInterface.sendWarning(exc.getMessage() + "\nError occured on line: "
+						+ fileLine + " : Line is being ignored and not added to array.",
+						"ERROR");
 			}
 		}
 		if(courseList.isEmpty())
 		{
-			throw new IllegalArgumentException("\nThe database is empty!\n");
+			throw new IllegalArgumentException("The database is empty!");
 		}
 		else {/* do nothing */}
 	}
@@ -106,7 +109,7 @@ public class Database
 		// Check the status of the database
 		if(arrayCount <= 0)
 		{
-			throw new IllegalArgumentException("Database is empty!\n");
+			throw new IllegalArgumentException("Database is empty!");
 		}
 		
 		// Loop semesters
@@ -124,10 +127,11 @@ public class Database
 		}
 		catch(IOException exc)
 		{
-			System.out.println("There was an error writing to the file!");
+			UserInterface.sendWarning("There was an error writing to the file!",
+					"ERROR");
 		}
 		buffer = ""; // clear the buffer
-		System.out.println("\nSave successfull!\n");
+		UserInterface.sendMessage("Save successfull!","INFO");
 	}
 	
 	/*************************************************************
@@ -151,7 +155,7 @@ public class Database
 			}
 			catch(IOException exc)
 			{
-				System.out.println("Course already exists!");
+				UserInterface.sendWarning("Course already exists!", "ERROR");
 			}
 			// Add new linkedList to upper layer
 			courseList.add(0, lowerList);
@@ -194,7 +198,7 @@ public class Database
 		}
 		catch(IOException exc)
 		{
-			System.out.println("Course already exists!");
+			UserInterface.sendWarning("Course already exists!","ERROR");
 		}
 	}
 	
@@ -256,7 +260,7 @@ public class Database
 				courseList.remove(index);
 		}
 		catch(IndexOutOfBoundsException exc)
-		{ System.out.println("Index is out of bounds!");}
+		{ UserInterface.sendWarning("Index is out of bounds!","ERROR");}
 	}
 	
 	/*************************************************************

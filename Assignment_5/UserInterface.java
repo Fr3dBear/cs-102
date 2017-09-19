@@ -18,7 +18,6 @@ import javax.swing.JTextField;
 public class UserInterface extends JFrame implements EventHandler
 {
 	static JFrame mainWindow;
-	static JFrame searchWindow;
 	
 	/*************************************************************
 	* Method: UserInterface()	                      	         *
@@ -54,18 +53,6 @@ public class UserInterface extends JFrame implements EventHandler
 	public static JFrame getMainWindow()
 	{
 		return mainWindow;
-	}
-	
-	/*************************************************************
-	* Method: getSearchWindow()	                      	         *
-	* Purpose: returns the mainWindow JFrame()			         *
-	*          							                         *
-	* Parameters: Void:			 N/A							 *
-	* Returns: JFrame:           The searchWindow			     *
-	**************************************************************/
-	public static JFrame getSearchWindow()
-	{
-		return searchWindow;
 	}
 	
 	/*************************************************************
@@ -150,63 +137,6 @@ public class UserInterface extends JFrame implements EventHandler
 		
 		// make the window visable
 		mainWindow.setVisible(true);
-	}
-	
-	/*************************************************************
-	* Method: addSearchWindow()	                      	         *
-	* Purpose: makes searchWindow as below standards	         *
-	*          							                         *
-	* Parameters: Boolean:       Text Enable for [num,title,term]*
-	* 								true for enabled             *
-	* Returns: void:             N/A						     *
-	**************************************************************/
-	public static void addSearchWindow(boolean num, boolean title, boolean term)
-	{
-		searchWindow = new JFrame("Search WIndow"); // create a new frame
-		// destroy the Jframe on closing
-		searchWindow.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		searchWindow.setSize(350,200); // set the size
-		GridLayout aGrid = new GridLayout(4,2); // config the layout
-		searchWindow.setLayout(aGrid); // set window layout
-		
-		// create buttons
-		JButton search 	= new JButton("Search");
-		JButton close = new JButton("Close");
-
-		// create text boxes
-		JTextField courseNum = new JTextField();
-		JTextField courseTitle = new JTextField();
-		JTextField courseTerm = new JTextField();
-		
-		// create lables
-		JLabel courseNumLbl = new JLabel("Enter the Course Number:");
-		JLabel courseTitleLbl = new JLabel("Enter the Course Title:");
-		JLabel courseTermLbl = new JLabel("Course Term (yyyytt format):");
-		
-		// disable the text boxes based upon the spawn
-		if(!num)
-			courseNum.setEnabled(false);
-		if(!title)
-			courseTitle.setEnabled(false);
-		if(!term)
-			courseTerm.setEnabled(false);
-		
-		// Add buttons to frame
-		searchWindow.add(courseNumLbl);
-		searchWindow.add(courseNum);
-		searchWindow.add(courseTitleLbl);
-		searchWindow.add(courseTitle);
-		searchWindow.add(courseTermLbl);
-		searchWindow.add(courseTerm);
-		searchWindow.add(search);
-		searchWindow.add(close);
-		
-		// config handler
-		SearchWindowHandler searchWindowHandler = new SearchWindowHandler();
-		
-		// add listeners to buttons
-		search.addActionListener(searchWindowHandler);
-		close.addActionListener(searchWindowHandler);
 	}
 		
 }

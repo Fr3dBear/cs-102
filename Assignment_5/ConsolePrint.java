@@ -24,7 +24,7 @@ public class ConsolePrint
 		// Check the status of the database
 		if(arrayCount <= 0)
 		{
-			throw new IllegalArgumentException("Database is empty!\n");
+			throw new IllegalArgumentException("Database is empty!");
 		}
 		
 		// Loop semesters
@@ -32,7 +32,7 @@ public class ConsolePrint
 		{
 			buffer += gather(printBase.get(index).getRoot());
 		}
-		System.out.println(buffer); // Print the entire database
+		UserInterface.sendMessage(buffer, "Database Data");
 		buffer = ""; // clear the buffer
 	}
 

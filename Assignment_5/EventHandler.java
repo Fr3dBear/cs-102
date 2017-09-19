@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /*************************************************************
 * Dalton Nofs                                                *
@@ -26,70 +27,92 @@ public interface EventHandler
 		// check which button was pressed
 		public void actionPerformed( ActionEvent action )
 		{
+			// hide the ui so more commands cant be run while this one is running
+			UserInterface.getMainWindow().setVisible(false);
+			
+			// if searh for num is pressed
 			if(((JButton)action.getSource()).getText().equals("Search for course number"))
 			{
-				// hide the ui so more commands cant be run while this one is running
-				UserInterface.getMainWindow().setVisible(false);
-				// create a new search window
-				UserInterface.addSearchWindow(true,false,false);
-				JFrame tempFrame = UserInterface.getSearchWindow();
-				tempFrame.setVisible(true); // make the window visable
-				String userEntry = System.out.println(tempFrame.getLayout().toString());
-				// unhide the ui so the user can pick a new task
-				UserInterface.getMainWindow().setVisible(true);
+				try
+				{
+					// ask user for course number
+					String inputValue = JOptionPane.showInputDialog("Enter the Course Number:");
+					Prog5.searchCourseNumInt(inputValue); // search for num
+				}
+				catch( NullPointerException exc ) { /* do nothing user just hit cancel */ }
 			}
+			// if search for title is pressed
 			else if(((JButton)action.getSource()).getText().equals("Search course titles"))
-			{
-				UserInterface.getMainWindow().setVisible(false);
-				UserInterface.sendMessage("Titles","titles");
-				UserInterface.getMainWindow().setVisible(true);
+			{	
+				try
+				{
+					// ask user for course title
+					String inputValue = JOptionPane.showInputDialog("Enter the Course Title:");
+					Prog5.searchCourseTitleInt(inputValue); // search for title
+				}
+				catch( NullPointerException exc ) { /* do nothing user just hit cancel */ }
 			}
+			// if print database is pressed
 			else if(((JButton)action.getSource()).getText().equals("Print all records"))
 			{
-				UserInterface.getMainWindow().setVisible(false);
-				UserInterface.sendMessage("print","Print");
-				UserInterface.getMainWindow().setVisible(true);
+				Prog5.printDatabaseInt(); // print the database out
 			}
+			// if compute gpa is pressed
 			else if(((JButton)action.getSource()).getText().equals("Compute GPA"))
 			{
-				UserInterface.getMainWindow().setVisible(false);
-				UserInterface.sendMessage("Compute","Compute");
-				UserInterface.getMainWindow().setVisible(true);
+				Prog5.calculateGPAInt(); // print the calculated gpa
 			}
+			// if add course is pressed
 			else if(((JButton)action.getSource()).getText().equals("Add Course"))
 			{
-				UserInterface.getMainWindow().setVisible(false);
-				UserInterface.sendMessage("Add","Add");
-				UserInterface.getMainWindow().setVisible(true);
+				try
+				{
+					Prog5.userAddCourse(Prog5.courseData); // start the add course prompts
+				}
+				catch( NullPointerException exc ) { /* do nothing user just hit cancel */ }
 			}
+			// if remove course is pressed
 			else if(((JButton)action.getSource()).getText().equals("Remove Course"))
 			{
-				UserInterface.getMainWindow().setVisible(false);
-				UserInterface.sendMessage("Remove","Remove");
-				UserInterface.getMainWindow().setVisible(true);
+				try 
+				{
+					Prog5.userRemoveCourse(Prog5.courseData); // start the remove course prompts
+				}
+				catch( NullPointerException exc ) { /* do nothing user just hit cancel */ }
 			}
+			// if edit course is pressed
 			else if(((JButton)action.getSource()).getText().equals("Edit Course"))
 			{
-				UserInterface.getMainWindow().setVisible(false);
-				UserInterface.sendMessage("Edit","Edit");
-				UserInterface.getMainWindow().setVisible(true);
+				try
+				{
+					Prog5.userEditCourse(Prog5.courseData); // start the edit course prompts
+				}
+				catch( NullPointerException exc ) { /* do nothing user just hit cancel */ }
 			}
+			// if store database is pressed
 			else if(((JButton)action.getSource()).getText().equals("Store Database"))
 			{
-				UserInterface.getMainWindow().setVisible(false);
-				UserInterface.sendMessage("Store","Store");
-				UserInterface.getMainWindow().setVisible(true);
+				try
+				{
+					Prog5.userStore(Prog5.courseData); // start the store prompts
+				}
+				catch( NullPointerException exc ) { /* do nothing user just hit cancel */ }
 			}
+			// if reload database is pressed
 			else if(((JButton)action.getSource()).getText().equals("Reload Database"))
 			{
-				UserInterface.getMainWindow().setVisible(false);
-				UserInterface.sendMessage("Reload", "Reload");
-				UserInterface.getMainWindow().setVisible(true);
+				try
+				{
+					Prog5.userReload(Prog5.courseData); // start the reload prompts
+				}
+				catch( NullPointerException exc ) { /* do nothing user just hit cancel */ }
 			}
+			// if exit database is pressed
 			else if(((JButton)action.getSource()).getText().equals("Exit"))
 			{
 				System.exit(0);
 			}
+			// default catch for button presses
 			else 
 			{
 				UserInterface.getMainWindow().setVisible(false);
@@ -97,29 +120,8 @@ public interface EventHandler
 						"the expected events","Error");
 				UserInterface.getMainWindow().setVisible(true);
 			}
-		}
-	}
-	
-	/*************************************************************
-	* Class: SearchWindowHandler	                      	     *
-	* Purpose: handler for searchWindow					         *
-	*          							                         *
-	* Parameters:                N/A                             *
-	* Returns: void:             N/A						     *
-	**************************************************************/
-	public class SearchWindowHandler implements ActionListener
-	{
-		// check which button was pressed
-		public void actionPerformed( ActionEvent action )
-		{
-			if(((JButton)action.getSource()).getText().equals("Search"))
-			{
-				JFrame tempFrame = UserInterface.getSearchWindow();
-			}
-			else if(((JButton)action.getSource()).getText().equals("Close"))
-			{
-				UserInterface.getSearchWindow().dispose();
-			}
+			// unhide the ui so the user can pick a new task
+			UserInterface.getMainWindow().setVisible(true);
 		}
 	}
 }
