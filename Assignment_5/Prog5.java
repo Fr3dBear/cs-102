@@ -1,4 +1,5 @@
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -309,6 +310,7 @@ public class Prog5
 		catch (NoSuchFieldException exc)
 		{ 
 			UserInterface.sendMessage("No results were found!", "INFO");
+			UserInterface.getMainWindow().setVisible(true);
 			return;
 		}
 		for(int index=0;index<returnResults.size();)
@@ -446,6 +448,7 @@ public class Prog5
 		catch (NoSuchFieldException exc)
 		{ 
 			UserInterface.sendWarning("No results were found!", "ERROR");
+			UserInterface.getMainWindow().setVisible(true);
 			return;
 		}
 		for(int index=0;index<returnResults.size();)
